@@ -154,7 +154,7 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                       {calculateOverallGPA().toFixed(2)}
                     </span>
                     <span className="text-muted-foreground text-xs sm:text-sm">
-                      {activeProfile?.courses.length || 0} courses {getTotalCredits()} credits
+                      {activeProfile?.courses.length || 0} courses • {getTotalCredits()} credits
                     </span>
                   </div>
                 </div>
