@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Calculator, User, LogOut, LayoutDashboard, Settings } from 'lucide-react';
+import { Menu, X, Calculator, User, LogOut, LayoutDashboard, Settings, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import EasyGPALogo from './EasyGPALogo';
@@ -21,6 +21,7 @@ interface NavbarProps {
 const Navbar = ({ onNavigate }: NavbarProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isProfileExpanded, setIsProfileExpanded] = useState(false);
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
 
@@ -194,42 +195,68 @@ const Navbar = ({ onNavigate }: NavbarProps) => {
                   </motion.div>
                 ))}
                 {user ? (
-                  <>
-                    <motion.div
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.3 }}
+                  <motion.div
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.3 }}
+                    className="flex flex-col"
+                  >
+                    <Button 
+                      variant="ghost" 
+                      className="w-full justify-between text-lg"
+                      onClick={() => setIsProfileExpanded(!isProfileExpanded)}
                     >
-                      <Button 
-                        variant="ghost" 
-                        className="w-full justify-start text-lg"
-                        onClick={() => {
-                          navigate('/dashboard');
-                          setIsMobileMenuOpen(false);
-                        }}
-                      >
-                        <LayoutDashboard className="w-4 h-4 mr-2" />
-                        Dashboard
-                      </Button>
-                    </motion.div>
-                    <motion.div
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.4 }}
-                    >
-                      <Button 
-                        variant="ghost" 
-                        className="w-full justify-start text-lg text-red-500 hover:text-red-500 hover:bg-red-500/10"
-                        onClick={() => {
-                          signOut();
-                          setIsMobileMenuOpen(false);
-                        }}
-                      >
-                        <LogOut className="w-4 h-4 mr-2" />
-                        Sign Out
-                      </Button>
-                    </motion.div>
-                  </>
+                      <span className="flex items-center">
+                        <User className="w-4 h-4 mr-2" />
+                        Profile
+                      </span>
+                      <ChevronDown className={`w-4 h-4 transition-transform ${isProfileExpanded ? 'rotate-180' : ''}`} />
+                    </Button>
+                    <AnimatePresence>
+                      {isProfileExpanded && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          exit={{ opacity: 0, height: 0 }}
+                          className="flex flex-col pl-4 overflow-hidden"
+                        >
+                          <Button 
+                            variant="ghost" 
+                            className="w-full justify-start text-base"
+                            onClick={() => {
+                              navigate('/dashboard');
+                              setIsMobileMenuOpen(false);
+                            }}
+                          >
+                            <LayoutDashboard className="w-4 h-4 mr-2" />
+                            Dashboard
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            className="w-full justify-start text-base"
+                            onClick={() => {
+                              navigate('/profile');
+                              setIsMobileMenuOpen(false);
+                            }}
+                          >
+                            <Settings className="w-4 h-4 mr-2" />
+                            Settings
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            className="w-full justify-start text-base text-red-500 hover:text-red-500 hover:bg-red-500/10"
+                            onClick={() => {
+                              signOut();
+                              setIsMobileMenuOpen(false);
+                            }}
+                          >
+                            <LogOut className="w-4 h-4 mr-2" />
+                            Sign Out
+                          </Button>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
                 ) : (
                   <motion.div
                     initial={{ opacity: 0, x: 20 }}
