@@ -82,7 +82,7 @@ const HeroSection = ({ onNavigate }: HeroSectionProps) => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.7 }}
-              className="flex items-center gap-6 pt-4"
+              className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 pt-2 sm:pt-4"
             >
               <div className="flex -space-x-2">
                 {[1, 2, 3, 4].map((i) => (
@@ -105,7 +105,7 @@ const HeroSection = ({ onNavigate }: HeroSectionProps) => {
             initial={{ opacity: 0, x: 50, rotateY: -10 }}
             animate={{ opacity: 1, x: 0, rotateY: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="relative"
+            className="relative w-full max-w-md mx-auto lg:max-w-none"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-3xl blur-3xl -z-10" />
             <MiniCalculator />
