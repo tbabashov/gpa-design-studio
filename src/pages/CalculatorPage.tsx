@@ -7,12 +7,15 @@ import {
   ChevronDown,
   TrendingUp,
   RotateCcw,
-  Save
+  Save,
+  Loader2
 } from 'lucide-react';
 import { toast } from 'sonner';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useCalculatorState, Course } from '@/hooks/useCalculatorState';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface CalculatorPageProps {
   onNavigateHome: () => void;
@@ -38,7 +41,42 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
     reorderCourses,
   } = useCalculatorState();
 
+  const { user } = useAuth();
   const [newProfileName, setNewProfileName] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSaveToDatabase = async () => {
+    if (!user) {
+      toast.error('Please sign in to save your GPA');
+      return;
+    }
+    
+    if (!activeProfile || activeProfile.courses.length === 0) {
+      toast.error('Add some courses first');
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const gpa = calculateOverallGPA();
+      const totalCredits = getTotalCredits();
+      
+      const { error } = await supabase.from('gpa_calculations').insert({
+        user_id: user.id,
+        gpa,
+        total_credits: totalCredits,
+        semester_name: activeProfile.name
+      });
+
+      if (error) throw error;
+      toast.success('GPA saved to dashboard!');
+    } catch (error) {
+      console.error('Error saving GPA:', error);
+      toast.error('Failed to save GPA');
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const handleCreateProfile = () => {
     if (!newProfileName.trim()) return;
@@ -135,10 +173,16 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                 <Button 
                   variant="outline" 
                   size="sm"
+                  onClick={handleSaveToDatabase}
+                  disabled={isSaving || !activeProfile}
                   className="border-primary/50 text-primary hover:bg-primary/10 text-xs sm:text-sm"
                 >
-                  <Save className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-                  Saved
+                  {isSaving ? (
+                    <Loader2 className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 animate-spin" />
+                  ) : (
+                    <Save className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                  )}
+                  {isSaving ? 'Saving...' : 'Save'}
                 </Button>
               </div>
             </div>
