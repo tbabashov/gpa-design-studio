@@ -137,7 +137,7 @@ const FeaturesSection = ({ onNavigate }: FeaturesSectionProps) => {
             </div>
           </motion.div>
 
-          {/* Box 5 - CTA - See All Features */}
+          {/* Box 5 - CTA - Learn More */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -147,14 +147,14 @@ const FeaturesSection = ({ onNavigate }: FeaturesSectionProps) => {
             className="group"
           >
             <div 
-              onClick={() => onNavigate?.('features-expanded')}
+              onClick={() => onNavigate?.('features')}
               className="h-full p-6 rounded-2xl border-2 border-dashed border-primary/30 hover:border-primary/50 transition-all duration-300 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-primary/5"
             >
               <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                 <ArrowRight className="w-6 h-6 text-primary" />
               </div>
               <h3 className="text-lg font-display font-semibold text-foreground mb-2">
-                See All Features
+                Learn More
               </h3>
               <p className="text-muted-foreground text-sm">
                 Explore everything EasyGPA offers

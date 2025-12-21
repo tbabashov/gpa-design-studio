@@ -73,11 +73,11 @@ const Index = () => {
   }
 
   if (activePage === 'features') {
-    return <FeaturesPage onNavigateHome={() => setActivePage('home')} />;
+    return <FeaturesPage onNavigate={handleNavigate} />;
   }
 
   if (activePage === 'contact') {
-    return <ContactPage onNavigateHome={() => setActivePage('home')} />;
+    return <ContactPage onNavigate={handleNavigate} />;
   }
 
   return (
