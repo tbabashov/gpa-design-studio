@@ -63,7 +63,7 @@ const HeroSection = ({ onNavigate }: HeroSectionProps) => {
                 variant="default" 
                 size="xl"
                 onClick={() => onNavigate('calculator')}
-                className="bg-white text-background hover:bg-white/90 font-semibold group"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold group"
               >
                 <Calculator className="w-5 h-5" />
                 Start Calculating
