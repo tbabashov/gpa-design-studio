@@ -251,7 +251,8 @@ export const useCalculatorState = () => {
     }, 0);
     
     const percentage = (weightedSum / totalWeight) * 100;
-    return { percentage, gpa: toGPA(percentage) };
+    const roundedPercentage = Math.round(percentage);
+    return { percentage, gpa: toGPA(roundedPercentage) };
   }, []);
 
   const calculateOverallGPA = useCallback(() => {
