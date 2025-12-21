@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Calculator } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import EasyGPALogo from './EasyGPALogo';
 
@@ -79,10 +79,12 @@ const Navbar = ({ onNavigate }: NavbarProps) => {
               className="hidden md:block"
             >
               <Button 
-                variant="hero" 
+                variant="default" 
                 size="default"
                 onClick={() => handleNavClick('calculator')}
+                className="bg-white text-background hover:bg-white/90 font-semibold"
               >
+                <Calculator className="w-4 h-4" />
                 Start Calculating
               </Button>
             </motion.div>
@@ -139,10 +141,11 @@ const Navbar = ({ onNavigate }: NavbarProps) => {
                   className="mt-4"
                 >
                   <Button 
-                    variant="hero" 
-                    className="w-full"
+                    variant="default" 
+                    className="w-full bg-white text-background hover:bg-white/90 font-semibold"
                     onClick={() => handleNavClick('calculator')}
                   >
+                    <Calculator className="w-4 h-4" />
                     Start Calculating
                   </Button>
                 </motion.div>

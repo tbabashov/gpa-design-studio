@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, BookOpen } from 'lucide-react';
+import { Calculator, BookOpen } from 'lucide-react';
 
 interface CTASectionProps {
   onNavigate: (section: string) => void;
@@ -38,13 +38,13 @@ const CTASection = ({ onNavigate }: CTASectionProps) => {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button 
-              variant="hero" 
+              variant="default" 
               size="xl"
               onClick={() => onNavigate('calculator')}
-              className="group"
+              className="bg-white text-background hover:bg-white/90 font-semibold"
             >
+              <Calculator className="w-5 h-5" />
               Start Calculating Now
-              <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
             </Button>
             <Button 
               variant="heroOutline" 
