@@ -3,39 +3,50 @@ import { Helmet } from 'react-helmet-async';
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
 import FeaturesSection from '@/components/FeaturesSection';
-import FeaturesExpandedSection from '@/components/FeaturesExpandedSection';
 import StatsSection from '@/components/StatsSection';
 import ReviewsSection from '@/components/ReviewsSection';
 import FAQSection from '@/components/FAQSection';
 import CTASection from '@/components/CTASection';
 import Footer from '@/components/Footer';
 import CalculatorPage from './CalculatorPage';
+import FeaturesPage from './FeaturesPage';
+import ContactPage from './ContactPage';
+
+type ActivePage = 'home' | 'calculator' | 'features' | 'contact';
 
 const Index = () => {
-  const [showCalculator, setShowCalculator] = useState(false);
+  const [activePage, setActivePage] = useState<ActivePage>('home');
   
   const homeRef = useRef<HTMLDivElement>(null);
   const featuresRef = useRef<HTMLDivElement>(null);
-  const featuresExpandedRef = useRef<HTMLDivElement>(null);
   const faqRef = useRef<HTMLDivElement>(null);
-  const contactRef = useRef<HTMLDivElement>(null);
 
   const handleNavigate = useCallback((section: string) => {
     if (section === 'calculator') {
-      setShowCalculator(true);
+      setActivePage('calculator');
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
 
-    setShowCalculator(false);
+    if (section === 'features') {
+      setActivePage('features');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    if (section === 'contact') {
+      setActivePage('contact');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    setActivePage('home');
     
     setTimeout(() => {
       const refs: Record<string, React.RefObject<HTMLDivElement>> = {
         home: homeRef,
-        features: featuresRef,
-        'features-expanded': featuresExpandedRef,
+        'features-preview': featuresRef,
         faq: faqRef,
-        contact: contactRef,
       };
 
       const ref = refs[section];
@@ -49,16 +60,24 @@ const Index = () => {
     }, 100);
   }, []);
 
-  if (showCalculator) {
+  if (activePage === 'calculator') {
     return (
       <>
         <Helmet>
           <title>GPA Calculator | EasyGPA - Smart Grade Calculator</title>
           <meta name="description" content="Calculate your GPA with precision. Add courses, assignments, and track your academic progress with EasyGPA's smart calculator." />
         </Helmet>
-        <CalculatorPage onNavigateHome={() => setShowCalculator(false)} />
+        <CalculatorPage onNavigateHome={() => setActivePage('home')} />
       </>
     );
+  }
+
+  if (activePage === 'features') {
+    return <FeaturesPage onNavigateHome={() => setActivePage('home')} />;
+  }
+
+  if (activePage === 'contact') {
+    return <ContactPage onNavigateHome={() => setActivePage('home')} />;
   }
 
   return (
@@ -79,10 +98,6 @@ const Index = () => {
         <div ref={featuresRef}>
           <FeaturesSection onNavigate={handleNavigate} />
         </div>
-
-        <div ref={featuresExpandedRef}>
-          <FeaturesExpandedSection />
-        </div>
         
         <StatsSection />
         
@@ -94,9 +109,7 @@ const Index = () => {
 
         <CTASection onNavigate={handleNavigate} />
         
-        <div ref={contactRef}>
-          <Footer onNavigate={handleNavigate} />
-        </div>
+        <Footer onNavigate={handleNavigate} />
       </div>
     </>
   );
