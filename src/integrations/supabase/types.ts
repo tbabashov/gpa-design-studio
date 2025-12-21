@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      gpa_calculations: {
+        Row: {
+          created_at: string
+          gpa: number
+          id: string
+          semester_name: string | null
+          total_credits: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          gpa: number
+          id?: string
+          semester_name?: string | null
+          total_credits?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          gpa?: number
+          id?: string
+          semester_name?: string | null
+          total_credits?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
