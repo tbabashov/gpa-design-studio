@@ -208,7 +208,7 @@ const ContactPage = ({ onNavigate }: ContactPageProps) => {
                 <div className="p-8 rounded-2xl glass-card">
                   <h3 className="text-xl font-display font-bold mb-4">Why EasyGPA?</h3>
                   <p className="text-muted-foreground leading-relaxed mb-6">
-                    We built EasyGPA because we believe every student deserves a simple, beautiful tool to track their academic progress. No sign-ups, no complexity — just results.
+                    We built EasyGPA because we believe every student deserves a simple, beautiful tool to track their academic progress. Sign in to sync across devices or use it locally — your choice.
                   </p>
                   <div className="space-y-4">
                     <div className="flex items-center gap-3">
@@ -217,11 +217,11 @@ const ContactPage = ({ onNavigate }: ContactPageProps) => {
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="w-2 h-2 rounded-full bg-secondary" />
-                      <span className="text-muted-foreground">No account required</span>
+                      <span className="text-muted-foreground">Sign in with Google or Microsoft</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="w-2 h-2 rounded-full bg-tertiary" />
-                      <span className="text-muted-foreground">Your data stays private</span>
+                      <span className="text-muted-foreground">Your data is encrypted & secure</span>
                     </div>
                   </div>
                 </div>

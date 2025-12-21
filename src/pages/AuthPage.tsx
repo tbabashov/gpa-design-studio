@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import EasyGPALogo from '@/components/EasyGPALogo';
@@ -21,6 +22,9 @@ const AuthPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
+  const [isResetting, setIsResetting] = useState(false);
   
   const { user, signIn, signUp, signInWithGoogle, signInWithMicrosoft } = useAuth();
   const navigate = useNavigate();
@@ -101,6 +105,36 @@ const AuthPage = () => {
     if (error) {
       toast.error(error.message);
       setIsLoading(false);
+    }
+  };
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const emailResult = emailSchema.safeParse(resetEmail);
+    if (!emailResult.success) {
+      toast.error('Please enter a valid email address');
+      return;
+    }
+    
+    setIsResetting(true);
+    
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+        redirectTo: `${window.location.origin}/auth`,
+      });
+      
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success('Check your email for the reset link!');
+        setShowForgotPassword(false);
+        setResetEmail('');
+      }
+    } catch {
+      toast.error('An error occurred. Please try again.');
+    } finally {
+      setIsResetting(false);
     }
   };
 
@@ -267,8 +301,21 @@ const AuthPage = () => {
               </Button>
             </form>
 
+            {/* Forgot Password Link */}
+            {isLogin && (
+              <div className="mt-4 text-center">
+                <button
+                  type="button"
+                  onClick={() => setShowForgotPassword(true)}
+                  className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                >
+                  Forgot your password?
+                </button>
+              </div>
+            )}
+
             {/* Toggle Login/Signup */}
-            <p className="mt-6 text-center text-sm text-muted-foreground">
+            <p className="mt-4 text-center text-sm text-muted-foreground">
               {isLogin ? "Don't have an account?" : 'Already have an account?'}{' '}
               <button
                 type="button"
@@ -282,6 +329,73 @@ const AuthPage = () => {
               </button>
             </p>
           </div>
+
+          {/* Forgot Password Modal */}
+          <AnimatePresence>
+            {showForgotPassword && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+                onClick={() => setShowForgotPassword(false)}
+              >
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  onClick={(e) => e.stopPropagation()}
+                  className="w-full max-w-md glass-card rounded-2xl p-8"
+                >
+                  <h2 className="text-2xl font-bold mb-2">Reset Password</h2>
+                  <p className="text-muted-foreground mb-6">
+                    Enter your email and we'll send you a link to reset your password.
+                  </p>
+                  
+                  <form onSubmit={handleForgotPassword} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="reset-email">Email</Label>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                        <Input
+                          id="reset-email"
+                          type="email"
+                          placeholder="you@example.com"
+                          value={resetEmail}
+                          onChange={(e) => setResetEmail(e.target.value)}
+                          className="pl-10 h-12 bg-background/50"
+                          disabled={isResetting}
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-3">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setShowForgotPassword(false)}
+                        className="flex-1"
+                        disabled={isResetting}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        type="submit"
+                        className="flex-1 bg-gradient-to-r from-primary to-secondary"
+                        disabled={isResetting}
+                      >
+                        {isResetting ? (
+                          <Loader2 className="h-5 w-5 animate-spin" />
+                        ) : (
+                          'Send Reset Link'
+                        )}
+                      </Button>
+                    </div>
+                  </form>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
       </div>
     </>
