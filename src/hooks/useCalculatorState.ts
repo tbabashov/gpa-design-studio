@@ -1,4 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 
 export interface Assignment {
   id: string;
@@ -27,6 +29,7 @@ export interface CalculatorState {
 }
 
 const STORAGE_KEY = 'easygpa_state';
+const SYNC_DEBOUNCE_MS = 1000;
 
 const generateId = () => Math.random().toString(36).substring(2, 9);
 
@@ -96,16 +99,116 @@ const notifyListeners = (state: CalculatorState) => {
 };
 
 export const useCalculatorState = () => {
+  const { user } = useAuth();
   const [state, setStateInternal] = useState<CalculatorState>(getInitialState);
+  const [isLoading, setIsLoading] = useState(false);
+  const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const hasLoadedFromDbRef = useRef(false);
+
+  // Sync state to database (debounced)
+  const syncToDatabase = useCallback(async (stateToSync: CalculatorState) => {
+    if (!user) return;
+    
+    try {
+      // Check if record exists first
+      const { data: existing } = await supabase
+        .from('calculator_states')
+        .select('id')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      
+      if (existing) {
+        // Update existing record
+        await supabase
+          .from('calculator_states')
+          .update({ state: JSON.parse(JSON.stringify(stateToSync)) })
+          .eq('user_id', user.id);
+      } else {
+        // Insert new record - use raw SQL approach via RPC or direct insert
+        const { error } = await supabase.rpc('insert_calculator_state' as never, {
+          p_user_id: user.id,
+          p_state: JSON.parse(JSON.stringify(stateToSync)),
+        } as never);
+        
+        // Fallback to direct insert if RPC doesn't exist
+        if (error) {
+          await supabase
+            .from('calculator_states')
+            .insert([{
+              user_id: user.id,
+              state: JSON.parse(JSON.stringify(stateToSync)),
+            }] as never);
+        }
+      }
+    } catch (err) {
+      console.error('Error syncing to database:', err);
+    }
+  }, [user]);
 
   const setState = useCallback((newState: CalculatorState | ((prev: CalculatorState) => CalculatorState)) => {
     setStateInternal(prev => {
       const nextState = typeof newState === 'function' ? newState(prev) : newState;
       localStorage.setItem(STORAGE_KEY, JSON.stringify(nextState));
       notifyListeners(nextState);
+      
+      // Debounced sync to database
+      if (syncTimeoutRef.current) {
+        clearTimeout(syncTimeoutRef.current);
+      }
+      syncTimeoutRef.current = setTimeout(() => {
+        syncToDatabase(nextState);
+      }, SYNC_DEBOUNCE_MS);
+      
       return nextState;
     });
-  }, []);
+  }, [syncToDatabase]);
+
+  // Load state from database on login
+  useEffect(() => {
+    const loadFromDatabase = async () => {
+      if (!user || hasLoadedFromDbRef.current) return;
+      
+      setIsLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('calculator_states')
+          .select('state')
+          .eq('user_id', user.id)
+          .maybeSingle();
+        
+        if (error) {
+          console.error('Error loading from database:', error);
+          return;
+        }
+        
+        if (data?.state) {
+          const dbState = data.state as unknown as CalculatorState;
+          setStateInternal(dbState);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(dbState));
+          notifyListeners(dbState);
+        } else {
+          // No data in DB yet, sync current local state to DB
+          const currentState = getInitialState();
+          syncToDatabase(currentState);
+        }
+        
+        hasLoadedFromDbRef.current = true;
+      } catch (err) {
+        console.error('Error loading from database:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    loadFromDatabase();
+  }, [user, syncToDatabase]);
+
+  // Reset the loaded flag when user logs out
+  useEffect(() => {
+    if (!user) {
+      hasLoadedFromDbRef.current = false;
+    }
+  }, [user]);
 
   useEffect(() => {
     const handleUpdate = (newState: CalculatorState) => {
@@ -354,6 +457,7 @@ export const useCalculatorState = () => {
   return {
     state,
     activeProfile,
+    isLoading,
     calculateCourseGPA,
     calculateOverallGPA,
     getTotalCredits,
