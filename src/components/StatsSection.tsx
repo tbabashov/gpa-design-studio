@@ -3,7 +3,7 @@ import { motion, useInView } from 'framer-motion';
 import { Users, BookOpen, Star, Target } from 'lucide-react';
 
 const stats = [
-  { icon: Users, value: 120000, suffix: '+', label: 'Active Users' },
+  { icon: Users, value: 420000, suffix: '+', label: 'Active Users' },
   { icon: BookOpen, value: 1.8, suffix: 'M', label: 'Courses Calculated', decimals: 1 },
   { icon: Star, value: 4.9, suffix: '', label: 'Average Rating', decimals: 1 },
   { icon: Target, value: 99.9, suffix: '%', label: 'Accuracy', decimals: 1 },

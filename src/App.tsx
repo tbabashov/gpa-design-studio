@@ -5,9 +5,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import Index from "./pages/Index";
 import AuthPage from "./pages/AuthPage";
 import DashboardPage from "./pages/DashboardPage";
+import ProfileSettingsPage from "./pages/ProfileSettingsPage";
 import CalculatorPage from "./pages/CalculatorPage";
 import FeaturesPage from "./pages/FeaturesPage";
 import ContactPage from "./pages/ContactPage";
@@ -30,24 +32,27 @@ const App = () => {
   return (
     <HelmetProvider>
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/auth" element={<AuthPage />} />
-                <Route path="/dashboard" element={<DashboardPage />} />
-                <Route path="/calculator" element={<CalculatorPage onNavigateHome={handleNavigateHome} />} />
-                <Route path="/features" element={<FeaturesPage onNavigate={handleNavigate} />} />
-                <Route path="/contact" element={<ContactPage onNavigate={handleNavigate} />} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
-          </TooltipProvider>
-        </AuthProvider>
+        <ThemeProvider defaultTheme="dark" storageKey="easygpa-theme">
+          <AuthProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/auth" element={<AuthPage />} />
+                  <Route path="/dashboard" element={<DashboardPage />} />
+                  <Route path="/profile" element={<ProfileSettingsPage />} />
+                  <Route path="/calculator" element={<CalculatorPage onNavigateHome={handleNavigateHome} />} />
+                  <Route path="/features" element={<FeaturesPage onNavigate={handleNavigate} />} />
+                  <Route path="/contact" element={<ContactPage onNavigate={handleNavigate} />} />
+                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </BrowserRouter>
+            </TooltipProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </QueryClientProvider>
     </HelmetProvider>
   );
