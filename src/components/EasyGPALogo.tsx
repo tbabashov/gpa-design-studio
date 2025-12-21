@@ -1,12 +1,14 @@
 import { motion } from 'framer-motion';
+import { cn } from '@/lib/utils';
 
 interface EasyGPALogoProps {
   size?: 'sm' | 'md' | 'lg';
   showText?: boolean;
   onClick?: () => void;
+  className?: string;
 }
 
-const EasyGPALogo = ({ size = 'md', showText = true, onClick }: EasyGPALogoProps) => {
+const EasyGPALogo = ({ size = 'md', showText = true, onClick, className }: EasyGPALogoProps) => {
   const sizeMap = {
     sm: { icon: 24, text: 'text-lg' },
     md: { icon: 32, text: 'text-xl lg:text-2xl' },
@@ -18,7 +20,7 @@ const EasyGPALogo = ({ size = 'md', showText = true, onClick }: EasyGPALogoProps
   return (
     <motion.button 
       onClick={onClick}
-      className="flex items-center gap-2 cursor-pointer"
+      className={cn("flex items-center gap-2 cursor-pointer", className)}
       whileHover={{ scale: 1.02 }}
       transition={{ type: "spring", stiffness: 400 }}
     >

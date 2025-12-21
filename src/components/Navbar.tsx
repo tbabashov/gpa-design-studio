@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Calculator } from 'lucide-react';
+import { Menu, X, Calculator, User, LogOut } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuth } from '@/contexts/AuthContext';
 import EasyGPALogo from './EasyGPALogo';
 
 interface NavbarProps {
@@ -11,6 +13,8 @@ interface NavbarProps {
 const Navbar = ({ onNavigate }: NavbarProps) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -71,13 +75,34 @@ const Navbar = ({ onNavigate }: NavbarProps) => {
               ))}
             </div>
 
-            {/* CTA Button */}
+            {/* CTA Buttons */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.5 }}
-              className="hidden md:block"
+              className="hidden md:flex items-center gap-3"
             >
+              {user ? (
+                <Button 
+                  variant="ghost" 
+                  size="default"
+                  onClick={() => signOut()}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Sign Out
+                </Button>
+              ) : (
+                <Button 
+                  variant="ghost" 
+                  size="default"
+                  onClick={() => navigate('/auth')}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  <User className="w-4 h-4 mr-2" />
+                  Sign In
+                </Button>
+              )}
               <Button 
                 variant="default" 
                 size="default"
@@ -87,7 +112,7 @@ const Navbar = ({ onNavigate }: NavbarProps) => {
                 <Calculator className="w-4 h-4" />
                 Start Calculating
               </Button>
-            </motion.div>
+              </motion.div>
 
             {/* Mobile Menu Button */}
             <Button
@@ -134,10 +159,47 @@ const Navbar = ({ onNavigate }: NavbarProps) => {
                     </Button>
                   </motion.div>
                 ))}
+                {user ? (
+                  <motion.div
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.4 }}
+                  >
+                    <Button 
+                      variant="ghost" 
+                      className="w-full justify-start text-lg"
+                      onClick={() => {
+                        signOut();
+                        setIsMobileMenuOpen(false);
+                      }}
+                    >
+                      <LogOut className="w-4 h-4 mr-2" />
+                      Sign Out
+                    </Button>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.4 }}
+                  >
+                    <Button 
+                      variant="ghost" 
+                      className="w-full justify-start text-lg"
+                      onClick={() => {
+                        navigate('/auth');
+                        setIsMobileMenuOpen(false);
+                      }}
+                    >
+                      <User className="w-4 h-4 mr-2" />
+                      Sign In
+                    </Button>
+                  </motion.div>
+                )}
                 <motion.div
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.4 }}
+                  transition={{ delay: 0.5 }}
                   className="mt-4"
                 >
                   <Button 
