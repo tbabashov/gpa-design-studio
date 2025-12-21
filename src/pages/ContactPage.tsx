@@ -1,15 +1,16 @@
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
-import { Mail, Phone, Clock, MapPin, Send, Github, Twitter, Linkedin, ArrowLeft } from 'lucide-react';
+import { Mail, Phone, Clock, MapPin, Send, Github, Twitter, Linkedin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import EasyGPALogo from '@/components/EasyGPALogo';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 import { useState } from 'react';
 
 interface ContactPageProps {
-  onNavigateHome: () => void;
+  onNavigate: (section: string) => void;
 }
 
-const ContactPage = ({ onNavigateHome }: ContactPageProps) => {
+const ContactPage = ({ onNavigate }: ContactPageProps) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -19,7 +20,6 @@ const ContactPage = ({ onNavigateHome }: ContactPageProps) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
     console.log('Form submitted:', formData);
   };
 
@@ -81,27 +81,7 @@ const ContactPage = ({ onNavigateHome }: ContactPageProps) => {
       </Helmet>
 
       <div className="min-h-screen">
-        {/* Navigation */}
-        <motion.nav
-          initial={{ y: -100 }}
-          animate={{ y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="fixed top-0 left-0 right-0 z-50 glass border-b border-border/50"
-        >
-          <div className="container mx-auto px-6 lg:px-8">
-            <div className="flex items-center justify-between h-16 lg:h-20">
-              <EasyGPALogo size="md" onClick={onNavigateHome} />
-              <Button 
-                variant="ghost" 
-                onClick={onNavigateHome}
-                className="gap-2"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Back to Home
-              </Button>
-            </div>
-          </div>
-        </motion.nav>
+        <Navbar onNavigate={onNavigate} />
 
         {/* Hero */}
         <section className="pt-32 pb-16 lg:pt-40 lg:pb-24 relative">
@@ -285,6 +265,8 @@ const ContactPage = ({ onNavigateHome }: ContactPageProps) => {
             </div>
           </div>
         </section>
+
+        <Footer onNavigate={onNavigate} />
       </div>
     </>
   );

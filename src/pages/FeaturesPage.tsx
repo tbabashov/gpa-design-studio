@@ -12,14 +12,14 @@ import {
   Shield,
   Clock,
   Users,
-  Sparkles,
-  ArrowLeft
+  Sparkles
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import EasyGPALogo from '@/components/EasyGPALogo';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 
 interface FeaturesPageProps {
-  onNavigateHome: () => void;
+  onNavigate: (section: string) => void;
 }
 
 const features = [
@@ -103,34 +103,34 @@ const getColorClasses = (color: string) => {
       return {
         bg: 'from-primary/20 to-primary/5',
         icon: 'text-primary',
-        hover: 'hover:shadow-[0_20px_60px_-15px_hsl(350_70%_65%/_0.3)]',
+        hover: 'hover:shadow-[0_20px_60px_-15px_hsl(320_70%_60%/_0.3)]',
         border: 'hover:border-primary/30',
       };
     case 'secondary':
       return {
         bg: 'from-secondary/20 to-secondary/5',
         icon: 'text-secondary',
-        hover: 'hover:shadow-[0_20px_60px_-15px_hsl(160_60%_55%/_0.3)]',
+        hover: 'hover:shadow-[0_20px_60px_-15px_hsl(170_70%_45%/_0.3)]',
         border: 'hover:border-secondary/30',
       };
     case 'tertiary':
       return {
         bg: 'from-tertiary/20 to-tertiary/5',
         icon: 'text-tertiary',
-        hover: 'hover:shadow-[0_20px_60px_-15px_hsl(210_70%_65%/_0.3)]',
+        hover: 'hover:shadow-[0_20px_60px_-15px_hsl(200_80%_55%/_0.3)]',
         border: 'hover:border-tertiary/30',
       };
     default:
       return {
         bg: 'from-primary/20 to-primary/5',
         icon: 'text-primary',
-        hover: 'hover:shadow-[0_20px_60px_-15px_hsl(350_70%_65%/_0.3)]',
+        hover: 'hover:shadow-[0_20px_60px_-15px_hsl(320_70%_60%/_0.3)]',
         border: 'hover:border-primary/30',
       };
   }
 };
 
-const FeaturesPage = ({ onNavigateHome }: FeaturesPageProps) => {
+const FeaturesPage = ({ onNavigate }: FeaturesPageProps) => {
   return (
     <>
       <Helmet>
@@ -139,27 +139,7 @@ const FeaturesPage = ({ onNavigateHome }: FeaturesPageProps) => {
       </Helmet>
 
       <div className="min-h-screen">
-        {/* Navigation */}
-        <motion.nav
-          initial={{ y: -100 }}
-          animate={{ y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="fixed top-0 left-0 right-0 z-50 glass border-b border-border/50"
-        >
-          <div className="container mx-auto px-6 lg:px-8">
-            <div className="flex items-center justify-between h-16 lg:h-20">
-              <EasyGPALogo size="md" onClick={onNavigateHome} />
-              <Button 
-                variant="ghost" 
-                onClick={onNavigateHome}
-                className="gap-2"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Back to Home
-              </Button>
-            </div>
-          </div>
-        </motion.nav>
+        <Navbar onNavigate={onNavigate} />
 
         {/* Hero */}
         <section className="pt-32 pb-16 lg:pt-40 lg:pb-24 relative">
@@ -233,12 +213,14 @@ const FeaturesPage = ({ onNavigateHome }: FeaturesPageProps) => {
               <h2 className="text-2xl md:text-3xl font-display font-bold mb-6">
                 Ready to try it out?
               </h2>
-              <Button variant="hero" size="lg" onClick={onNavigateHome}>
+              <Button variant="hero" size="lg" onClick={() => onNavigate('calculator')}>
                 Start Calculating Now
               </Button>
             </motion.div>
           </div>
         </section>
+
+        <Footer onNavigate={onNavigate} />
       </div>
     </>
   );
