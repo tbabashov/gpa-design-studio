@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { motion } from 'framer-motion';
-import { User, Mail, Calendar, TrendingUp, Award, Trash2, AlertTriangle } from 'lucide-react';
+import { User, Mail, Calendar, TrendingUp, Award, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
@@ -62,27 +62,24 @@ const DashboardPage = () => {
     }
   };
 
-  const handleDeleteAccount = async () => {
+  const handleDeleteCalculation = async (calcId: string) => {
     try {
-      // Delete user's calculations first
-      await supabase.from('gpa_calculations').delete().eq('user_id', user?.id);
-      
-      // Delete profile
-      await supabase.from('profiles').delete().eq('user_id', user?.id);
-      
-      // Sign out
-      await signOut();
-      
+      const { error } = await supabase
+        .from('gpa_calculations')
+        .delete()
+        .eq('id', calcId);
+
+      if (error) throw error;
+
+      setCalculations(calculations.filter(c => c.id !== calcId));
       toast({
-        title: "Account deleted",
-        description: "Your account and all data have been removed.",
+        title: "Calculation deleted",
+        description: "The calculation has been removed.",
       });
-      
-      navigate('/');
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to delete account. Please try again.",
+        description: "Failed to delete calculation.",
         variant: "destructive",
       });
     }
@@ -236,7 +233,7 @@ const DashboardPage = () => {
           </Card>
 
           {/* Recent Calculations */}
-          <Card className="mb-8">
+          <Card>
             <CardHeader>
               <CardTitle>Recent Calculations</CardTitle>
               <CardDescription>Your latest GPA calculations</CardDescription>
@@ -255,7 +252,33 @@ const DashboardPage = () => {
                           {new Date(calc.created_at).toLocaleDateString()}
                         </p>
                       </div>
-                      <p className="text-xl font-bold text-primary">{Number(calc.gpa).toFixed(2)}</p>
+                      <div className="flex items-center gap-3">
+                        <p className="text-xl font-bold text-primary">{Number(calc.gpa).toFixed(2)}</p>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive">
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete this calculation?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This will permanently remove this GPA calculation from your history.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction 
+                                onClick={() => handleDeleteCalculation(calc.id)}
+                                className="bg-destructive hover:bg-destructive/90"
+                              >
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -264,53 +287,6 @@ const DashboardPage = () => {
                   No calculations yet. Use the calculator to get started!
                 </p>
               )}
-            </CardContent>
-          </Card>
-
-          {/* Danger Zone */}
-          <Card className="border-red-500/50 bg-red-500/5">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-red-500">
-                <AlertTriangle className="w-5 h-5" />
-                Danger Zone
-              </CardTitle>
-              <CardDescription>Irreversible actions for your account</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="font-medium text-foreground">Delete Account</p>
-                  <p className="text-sm text-muted-foreground">
-                    Permanently delete your account and all associated data
-                  </p>
-                </div>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button variant="destructive" className="gap-2">
-                      <Trash2 className="w-4 h-4" />
-                      Delete Account
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        This action cannot be undone. This will permanently delete your account
-                        and remove all your data including GPA calculations and profile information.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction 
-                        onClick={handleDeleteAccount}
-                        className="bg-red-500 hover:bg-red-600"
-                      >
-                        Delete Account
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </div>
             </CardContent>
           </Card>
         </motion.div>
