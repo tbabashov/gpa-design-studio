@@ -38,8 +38,13 @@ const Navbar = ({ onNavigate }: NavbarProps) => {
   ];
 
   const handleNavClick = (section: string) => {
-    onNavigate(section);
     setIsMobileMenuOpen(false);
+    // Use direct navigation for proper routing
+    if (section === 'home') navigate('/');
+    else if (section === 'calculator') navigate('/calculator');
+    else if (section === 'features') navigate('/features');
+    else if (section === 'contact') navigate('/contact');
+    else onNavigate(section);
   };
 
   return (
