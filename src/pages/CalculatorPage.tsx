@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence, Reorder } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { 
@@ -13,6 +13,9 @@ import {
 import { toast } from 'sonner';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import GPAGoalTracker from '@/components/GPAGoalTracker';
+import WhatIfCalculator from '@/components/WhatIfCalculator';
+import ExportShare from '@/components/ExportShare';
 import { useCalculatorState, Course } from '@/hooks/useCalculatorState';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -44,6 +47,19 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
   const { user } = useAuth();
   const [newProfileName, setNewProfileName] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [targetGPA, setTargetGPA] = useState<number | null>(() => {
+    const saved = localStorage.getItem('easygpa_target');
+    return saved ? parseFloat(saved) : null;
+  });
+
+  // Persist target GPA
+  useEffect(() => {
+    if (targetGPA !== null) {
+      localStorage.setItem('easygpa_target', targetGPA.toString());
+    } else {
+      localStorage.removeItem('easygpa_target');
+    }
+  }, [targetGPA]);
 
   const handleSaveToDatabase = async () => {
     if (!user) {
@@ -188,6 +204,24 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
             </div>
           </motion.div>
 
+          {/* Goal Tracker + What-If + Export Row */}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-10">
+            <GPAGoalTracker 
+              currentGPA={calculateOverallGPA()} 
+              targetGPA={targetGPA}
+              onSetTarget={setTargetGPA}
+            />
+            <WhatIfCalculator 
+              currentGPA={calculateOverallGPA()} 
+              totalCredits={getTotalCredits()} 
+            />
+            <ExportShare 
+              profile={activeProfile}
+              overallGPA={calculateOverallGPA()}
+              totalCredits={getTotalCredits()}
+              calculateCourseGPA={calculateCourseGPA}
+            />
+          </div>
           {/* Workspace Section */}
           <div className="mb-6 sm:mb-8">
             <h2 className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-3 sm:mb-4">
