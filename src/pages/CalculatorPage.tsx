@@ -381,7 +381,7 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                                   </div>
                                   <div className="flex items-center justify-between text-xs sm:text-sm">
                                     <span className="text-muted-foreground">Course GPA:</span>
-                                    <span className="font-medium text-primary">{gpa.toFixed(1)}</span>
+                                    <span className="font-medium text-primary">{gpa.toFixed(2)}</span>
                                   </div>
                                 </div>
                               </div>
