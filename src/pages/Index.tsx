@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
 import FeaturesSection from '@/components/FeaturesSection';
+import FeaturesExpandedSection from '@/components/FeaturesExpandedSection';
 import StatsSection from '@/components/StatsSection';
 import ReviewsSection from '@/components/ReviewsSection';
 import FAQSection from '@/components/FAQSection';
@@ -15,6 +16,7 @@ const Index = () => {
   
   const homeRef = useRef<HTMLDivElement>(null);
   const featuresRef = useRef<HTMLDivElement>(null);
+  const featuresExpandedRef = useRef<HTMLDivElement>(null);
   const faqRef = useRef<HTMLDivElement>(null);
   const contactRef = useRef<HTMLDivElement>(null);
 
@@ -31,6 +33,7 @@ const Index = () => {
       const refs: Record<string, React.RefObject<HTMLDivElement>> = {
         home: homeRef,
         features: featuresRef,
+        'features-expanded': featuresExpandedRef,
         faq: faqRef,
         contact: contactRef,
       };
@@ -74,7 +77,11 @@ const Index = () => {
         </div>
         
         <div ref={featuresRef}>
-          <FeaturesSection />
+          <FeaturesSection onNavigate={handleNavigate} />
+        </div>
+
+        <div ref={featuresExpandedRef}>
+          <FeaturesExpandedSection />
         </div>
         
         <StatsSection />

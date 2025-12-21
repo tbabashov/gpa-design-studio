@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { Mail, Phone, Clock, Github, Twitter, Linkedin } from 'lucide-react';
+import EasyGPALogo from './EasyGPALogo';
 
 interface FooterProps {
   onNavigate: (section: string) => void;
@@ -39,9 +40,12 @@ const Footer = ({ onNavigate }: FooterProps) => {
             transition={{ duration: 0.5 }}
             className="lg:col-span-1"
           >
-            <h3 className="text-2xl font-display font-bold gradient-text mb-4">
-              EasyGPA
-            </h3>
+            <div className="mb-4">
+              <EasyGPALogo 
+                size="lg" 
+                onClick={() => onNavigate('home')} 
+              />
+            </div>
             <p className="text-muted-foreground leading-relaxed mb-6">
               Your gateway to academic success. Calculate, track, and optimize your GPA with precision.
             </p>
