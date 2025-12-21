@@ -216,7 +216,7 @@ export const useCalculatorState = () => {
     const newCourse: Course = {
       id: generateId(),
       name: '',
-      credits: 3,
+      credits: 6,
       assignments: [],
       isCollapsed: false,
     };
