@@ -31,6 +31,10 @@ export default {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
         },
+        tertiary: {
+          DEFAULT: "hsl(var(--tertiary))",
+          foreground: "hsl(var(--tertiary-foreground))",
+        },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
@@ -93,8 +97,19 @@ export default {
           "50%": { transform: "translateY(-16px)" },
         },
         "pulse-glow": {
-          "0%, 100%": { boxShadow: "0 0 20px hsl(217 91% 60% / 0.3)" },
-          "50%": { boxShadow: "0 0 40px hsl(217 91% 60% / 0.5)" },
+          "0%, 100%": { boxShadow: "0 0 20px hsl(350 70% 65% / 0.3)" },
+          "50%": { boxShadow: "0 0 40px hsl(350 70% 65% / 0.5)" },
+        },
+        "aurora-pulse": {
+          "0%, 100%": { 
+            textShadow: "0 0 20px hsl(350 70% 65% / 0.4), 0 0 40px hsl(160 60% 55% / 0.2), 0 0 60px hsl(210 70% 65% / 0.1)"
+          },
+          "33%": { 
+            textShadow: "0 0 20px hsl(160 60% 55% / 0.4), 0 0 40px hsl(210 70% 65% / 0.2), 0 0 60px hsl(350 70% 65% / 0.1)"
+          },
+          "66%": { 
+            textShadow: "0 0 20px hsl(210 70% 65% / 0.4), 0 0 40px hsl(350 70% 65% / 0.2), 0 0 60px hsl(160 60% 55% / 0.1)"
+          },
         },
         scroll: {
           "0%": { transform: "translateX(0)" },
@@ -109,6 +124,7 @@ export default {
         "scale-in": "scale-in 0.5s ease-out forwards",
         float: "float 6s ease-in-out infinite",
         "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+        "aurora-pulse": "aurora-pulse 4s ease-in-out infinite",
         scroll: "scroll 30s linear infinite",
       },
     },
