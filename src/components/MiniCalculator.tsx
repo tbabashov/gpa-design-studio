@@ -89,7 +89,7 @@ const MiniCalculator = () => {
                     onChange={(e) => updateCourse(course.id, { credits: parseInt(e.target.value) || 1 })}
                     min="1"
                     max="12"
-                    className="w-10 sm:w-12 text-[10px] sm:text-xs text-center px-1 py-0.5 rounded bg-background/50 border border-border/50 text-foreground"
+                    className="w-10 sm:w-12 text-[10px] sm:text-xs text-center px-1 py-0.5 rounded bg-muted border border-border text-foreground"
                     title="Credits"
                   />
                   <div className="text-right min-w-[40px] sm:min-w-[50px]">
@@ -151,7 +151,7 @@ const MiniCalculator = () => {
                                 onChange={(e) => updateAssignment(course.id, assignment.id, { grade: parseFloat(e.target.value) || 0 })}
                                 min="0"
                                 max="100"
-                                className="w-10 sm:w-12 text-[10px] sm:text-xs text-center px-1 py-0.5 rounded bg-background/50 border border-border/50"
+                                className="w-10 sm:w-12 text-[10px] sm:text-xs text-center px-1 py-0.5 rounded bg-muted border border-border text-foreground"
                                 placeholder="%"
                               />
                               <input
@@ -160,7 +160,7 @@ const MiniCalculator = () => {
                                 onChange={(e) => updateAssignment(course.id, assignment.id, { weight: parseFloat(e.target.value) || 0 })}
                                 min="0"
                                 max="100"
-                                className="w-10 sm:w-12 text-[10px] sm:text-xs text-center px-1 py-0.5 rounded bg-background/50 border border-border/50"
+                                className="w-10 sm:w-12 text-[10px] sm:text-xs text-center px-1 py-0.5 rounded bg-muted border border-border text-foreground"
                                 placeholder="wt"
                               />
                               <button
