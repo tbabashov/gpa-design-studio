@@ -43,8 +43,8 @@ const features = [
   },
   {
     icon: Save,
-    title: 'Saved Progress',
-    description: 'Return anytime — your data is remembered automatically in your browser. Never lose your work again.',
+    title: 'Cloud Sync',
+    description: 'Sign in to save your data securely in the cloud. Access your grades from any device, anytime.',
     color: 'primary',
   },
   {
@@ -56,7 +56,7 @@ const features = [
   {
     icon: Zap,
     title: 'Lightning Fast',
-    description: 'No accounts required. No clutter. Just instant, accurate results when you need them.',
+    description: 'Clean, distraction-free interface. Just instant, accurate results when you need them.',
     color: 'tertiary',
   },
   {
@@ -73,8 +73,8 @@ const features = [
   },
   {
     icon: Shield,
-    title: 'Privacy First',
-    description: 'Your data stays on your device. No sign-ups, no tracking, no data collection.',
+    title: 'Secure & Private',
+    description: 'Your data is encrypted and stored securely. We never share your information with third parties.',
     color: 'tertiary',
   },
   {
