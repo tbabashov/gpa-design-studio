@@ -90,7 +90,7 @@ const Navbar = ({ onNavigate }: NavbarProps) => {
               className="hidden md:flex items-center gap-3"
             >
               {user ? (
-                <DropdownMenu>
+                <DropdownMenu modal={false}>
                   <DropdownMenuTrigger asChild>
                     <Button 
                       variant="ghost" 
@@ -106,7 +106,10 @@ const Navbar = ({ onNavigate }: NavbarProps) => {
                       Dashboard
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => signOut()}>
+                    <DropdownMenuItem 
+                      onClick={() => signOut()}
+                      className="text-red-500 focus:text-red-500 focus:bg-red-500/10"
+                    >
                       <LogOut className="w-4 h-4 mr-2" />
                       Sign Out
                     </DropdownMenuItem>
@@ -205,7 +208,7 @@ const Navbar = ({ onNavigate }: NavbarProps) => {
                     >
                       <Button 
                         variant="ghost" 
-                        className="w-full justify-start text-lg"
+                        className="w-full justify-start text-lg text-red-500 hover:text-red-500 hover:bg-red-500/10"
                         onClick={() => {
                           signOut();
                           setIsMobileMenuOpen(false);
