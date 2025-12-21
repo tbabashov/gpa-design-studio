@@ -25,7 +25,11 @@ const faqs = [
   },
   {
     question: 'Is my data saved automatically?',
-    answer: 'All data is stored locally in your browser, so your progress is saved automatically. Your data remains private and accessible only on your device.',
+    answer: 'Yes! When you sign in, your data is securely synced to the cloud so you can access it from any device. Your progress is always saved automatically.',
+  },
+  {
+    question: 'Do I need an account?',
+    answer: 'You can use EasyGPA without an account, but your data will only be saved locally. Sign in with Google or Microsoft to sync your data across devices and never lose your progress.',
   },
 ];
 
