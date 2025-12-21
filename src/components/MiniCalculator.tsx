@@ -30,7 +30,7 @@ const MiniCalculator = () => {
 
   return (
     <motion.div 
-      className="glass-card rounded-2xl p-4 sm:p-5 shadow-xl max-h-[500px] overflow-y-auto"
+      className="glass-card rounded-2xl p-4 sm:p-5 shadow-xl max-h-[420px] sm:max-h-[500px] overflow-y-auto w-full"
       whileHover={{ y: -3 }}
       transition={{ type: "spring", stiffness: 300 }}
     >
