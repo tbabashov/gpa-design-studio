@@ -7,12 +7,12 @@ import {
   GripVertical, 
   ChevronDown, 
   ChevronUp,
-  Home,
   BookOpen,
   User,
   Info
 } from 'lucide-react';
 import { toast } from 'sonner';
+import EasyGPALogo from '@/components/EasyGPALogo';
 
 interface Assignment {
   id: string;
@@ -288,13 +288,11 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
       <header className="sticky top-0 z-50 glass border-b border-border/50">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <h1 className="text-xl font-display font-bold gradient-text">EasyGPA Calculator</h1>
+            <EasyGPALogo size="sm" onClick={onNavigateHome} />
+            <span className="text-muted-foreground">|</span>
+            <span className="text-sm font-medium text-muted-foreground">Calculator</span>
           </div>
           <div className="flex items-center gap-3">
-            <Button variant="nav" onClick={onNavigateHome}>
-              <Home className="w-4 h-4 mr-2" />
-              Home
-            </Button>
             <Button variant="hero" size="sm" onClick={createProfile}>
               <Plus className="w-4 h-4" />
               New Profile

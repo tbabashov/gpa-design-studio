@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import EasyGPALogo from './EasyGPALogo';
 
 interface NavbarProps {
   onNavigate: (section: string) => void;
@@ -45,15 +46,10 @@ const Navbar = ({ onNavigate }: NavbarProps) => {
         <div className="container mx-auto px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-20">
             {/* Logo */}
-            <motion.div 
-              className="flex items-center gap-2"
-              whileHover={{ scale: 1.02 }}
-              transition={{ type: "spring", stiffness: 400 }}
-            >
-              <span className="text-xl lg:text-2xl font-display font-bold gradient-text">
-                EasyGPA
-              </span>
-            </motion.div>
+            <EasyGPALogo 
+              size="md" 
+              onClick={() => handleNavClick('home')} 
+            />
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center gap-2">
