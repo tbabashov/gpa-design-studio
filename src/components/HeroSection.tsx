@@ -101,7 +101,7 @@ const HeroSection = ({ onNavigate }: HeroSectionProps) => {
                 ))}
               </div>
               <div className="text-sm text-muted-foreground">
-                <span className="text-foreground font-semibold">10,000+</span> students trust EasyGPA
+                <span className="text-foreground font-semibold">420,000+</span> students trust EasyGPA
               </div>
             </motion.div>
           </div>
