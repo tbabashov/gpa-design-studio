@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 export interface Assignment {
   id: string;
   name: string;
-  grade: number;
+  grade: number | null;
   weight: number;
 }
 
@@ -144,7 +144,7 @@ export const useCalculatorState = () => {
     if (totalWeight === 0) return { percentage: 0, gpa: 0 };
     
     const weightedSum = course.assignments.reduce((sum, a) => {
-      return sum + (a.grade || 0) * (a.weight || 0) / 100;
+      return sum + (a.grade ?? 0) * (a.weight || 0) / 100;
     }, 0);
     
     const percentage = (weightedSum / totalWeight) * 100;
@@ -262,7 +262,7 @@ export const useCalculatorState = () => {
     const newAssignment: Assignment = {
       id: generateId(),
       name: '',
-      grade: 0,
+      grade: null,
       weight: 0,
     };
     

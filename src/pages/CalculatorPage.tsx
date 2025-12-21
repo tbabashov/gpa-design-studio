@@ -129,7 +129,7 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
               <span className="gradient-text">GPA Calculator</span>
             </h1>
             <p className="text-muted-foreground text-base sm:text-lg px-4">
-              Track multiple profiles, add assignments, and watch your GPA update in real-time.
+              Track multiple workspaces, add assignments, and watch your GPA update in real-time.
             </p>
           </div>
 
@@ -188,10 +188,10 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
             </div>
           </motion.div>
 
-          {/* Profiles Section */}
+          {/* Workspace Section */}
           <div className="mb-6 sm:mb-8">
             <h2 className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-3 sm:mb-4">
-              Profiles
+              Workspace
             </h2>
             <div className="flex flex-wrap gap-2 mb-4">
               {state.profiles.map(profile => (
@@ -335,12 +335,16 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                                       />
                                       <input
                                         type="number"
-                                        value={assignment.grade === 0 ? '' : assignment.grade}
-                                        onChange={(e) => updateAssignment(course.id, assignment.id, { grade: e.target.value === '' ? 0 : parseFloat(e.target.value) })}
+                                        value={assignment.grade ?? ''}
+                                        onChange={(e) =>
+                                          updateAssignment(course.id, assignment.id, {
+                                            grade: e.target.value === '' ? null : parseFloat(e.target.value),
+                                          })
+                                        }
                                         min="0"
                                         max="100"
                                         className="w-16 sm:w-24 px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-transparent border border-border/50 text-foreground text-center focus:outline-none focus:border-primary/50 text-sm sm:text-base"
-                                        placeholder="0"
+                                        placeholder="Score"
                                       />
                                       <input
                                         type="number"
