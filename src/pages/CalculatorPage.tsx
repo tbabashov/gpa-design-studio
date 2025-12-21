@@ -8,7 +8,8 @@ import {
   TrendingUp,
   RotateCcw,
   Save,
-  Loader2
+  Loader2,
+  GripVertical
 } from 'lucide-react';
 import { toast } from 'sonner';
 import Navbar from '@/components/Navbar';
@@ -42,6 +43,7 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
     updateAssignment,
     deleteAssignment,
     reorderCourses,
+    reorderAssignments,
   } = useCalculatorState();
 
   const { user } = useAuth();
@@ -355,50 +357,59 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                                     Assignments
                                   </h3>
                                   
-                                  {course.assignments.map(assignment => (
-                                    <div 
-                                      key={assignment.id}
-                                      className="flex flex-wrap items-center gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl border border-border/30 mb-3"
-                                    >
-                                      <input
-                                        type="text"
-                                        value={assignment.name}
-                                        onChange={(e) => updateAssignment(course.id, assignment.id, { name: e.target.value })}
-                                        className="flex-1 min-w-[120px] sm:min-w-[200px] px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-transparent border border-border/50 text-foreground focus:outline-none focus:border-primary/50 text-sm sm:text-base"
-                                        placeholder="Assignment name"
-                                      />
-                                      <input
-                                        type="number"
-                                        value={assignment.grade ?? ''}
-                                        onChange={(e) =>
-                                          updateAssignment(course.id, assignment.id, {
-                                            grade: e.target.value === '' ? null : parseFloat(e.target.value),
-                                          })
-                                        }
-                                        min="0"
-                                        max="100"
-                                        className="w-16 sm:w-24 px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-transparent border border-border/50 text-foreground text-center focus:outline-none focus:border-primary/50 text-sm sm:text-base"
-                                        placeholder="Score"
-                                      />
-                                      <input
-                                        type="number"
-                                        value={assignment.weight || ''}
-                                        onChange={(e) => updateAssignment(course.id, assignment.id, { weight: parseFloat(e.target.value) || 0 })}
-                                        min="0"
-                                        max="100"
-                                        className="w-16 sm:w-24 px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-transparent border border-border/50 text-foreground text-center focus:outline-none focus:border-primary/50 text-sm sm:text-base"
-                                        placeholder="Weight"
-                                      />
-                                      <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={() => deleteAssignment(course.id, assignment.id)}
-                                        className="text-destructive hover:text-destructive hover:bg-destructive/10 h-8 w-8 sm:h-10 sm:w-10"
+                                  <Reorder.Group
+                                    axis="y"
+                                    values={course.assignments}
+                                    onReorder={(newOrder) => reorderAssignments(course.id, newOrder)}
+                                    className="space-y-3"
+                                  >
+                                    {course.assignments.map(assignment => (
+                                      <Reorder.Item
+                                        key={assignment.id}
+                                        value={assignment}
+                                        className="flex flex-wrap items-center gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl border border-border/30 cursor-grab active:cursor-grabbing bg-background/50"
                                       >
-                                        <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
-                                      </Button>
-                                    </div>
-                                  ))}
+                                        <GripVertical className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                                        <input
+                                          type="text"
+                                          value={assignment.name}
+                                          onChange={(e) => updateAssignment(course.id, assignment.id, { name: e.target.value })}
+                                          className="flex-1 min-w-[120px] sm:min-w-[200px] px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-transparent border border-border/50 text-foreground focus:outline-none focus:border-primary/50 text-sm sm:text-base"
+                                          placeholder="Assignment name"
+                                        />
+                                        <input
+                                          type="number"
+                                          value={assignment.grade ?? ''}
+                                          onChange={(e) =>
+                                            updateAssignment(course.id, assignment.id, {
+                                              grade: e.target.value === '' ? null : parseFloat(e.target.value),
+                                            })
+                                          }
+                                          min="0"
+                                          max="100"
+                                          className="w-16 sm:w-24 px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-transparent border border-border/50 text-foreground text-center focus:outline-none focus:border-primary/50 text-sm sm:text-base"
+                                          placeholder="Score"
+                                        />
+                                        <input
+                                          type="number"
+                                          value={assignment.weight || ''}
+                                          onChange={(e) => updateAssignment(course.id, assignment.id, { weight: parseFloat(e.target.value) || 0 })}
+                                          min="0"
+                                          max="100"
+                                          className="w-16 sm:w-24 px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-transparent border border-border/50 text-foreground text-center focus:outline-none focus:border-primary/50 text-sm sm:text-base"
+                                          placeholder="Weight"
+                                        />
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          onClick={() => deleteAssignment(course.id, assignment.id)}
+                                          className="text-destructive hover:text-destructive hover:bg-destructive/10 h-8 w-8 sm:h-10 sm:w-10"
+                                        >
+                                          <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
+                                        </Button>
+                                      </Reorder.Item>
+                                    ))}
+                                  </Reorder.Group>
 
                                   <button
                                     onClick={() => addAssignment(course.id)}
