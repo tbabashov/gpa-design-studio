@@ -6,7 +6,69 @@
 
 @layer base {
   :root {
-    /* Core palette - Deep navy dark with cyan-pink gradient accents */
+    /* Light theme - Clean, bright with subtle accents */
+    --background: 0 0% 100%;
+    --foreground: 220 20% 10%;
+
+    --card: 0 0% 98%;
+    --card-foreground: 220 20% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 20% 10%;
+
+    /* Main gradient colors - Cyan/Teal to Pink/Magenta */
+    --primary: 320 70% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 170 70% 40%;
+    --secondary-foreground: 0 0% 100%;
+
+    --tertiary: 200 80% 45%;
+    --tertiary-foreground: 0 0% 100%;
+
+    --muted: 220 15% 92%;
+    --muted-foreground: 220 10% 40%;
+
+    --accent: 320 70% 50%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 15% 88%;
+    --input: 220 15% 88%;
+    --ring: 170 70% 40%;
+
+    --radius: 0.75rem;
+
+    /* Gradient tokens - Cyan to Pink */
+    --gradient-aurora: linear-gradient(135deg, hsl(320 70% 50%), hsl(170 70% 40%));
+    --gradient-text: linear-gradient(135deg, hsl(320 70% 55%), hsl(280 60% 55%), hsl(200 80% 50%), hsl(170 70% 40%));
+    --gradient-aurora-subtle: linear-gradient(135deg, hsl(320 70% 50% / 0.1), hsl(170 70% 40% / 0.1));
+    --gradient-glass: linear-gradient(180deg, hsl(0 0% 100% / 0.8), hsl(0 0% 98% / 0.6));
+    --gradient-radial-1: radial-gradient(1200px 600px at 10% -10%, hsl(320 50% 95%) 0%, transparent 100%);
+    --gradient-radial-2: radial-gradient(1000px 600px at 90% 20%, hsl(170 40% 95%) 0%, transparent 100%);
+    --gradient-radial-3: radial-gradient(800px 500px at 50% 80%, hsl(200 50% 95%) 0%, transparent 100%);
+    
+    --shadow-glow-primary: 0 0 60px hsl(320 70% 50% / 0.15);
+    --shadow-glow-secondary: 0 0 60px hsl(170 70% 40% / 0.15);
+    --shadow-glow-tertiary: 0 0 60px hsl(200 80% 45% / 0.15);
+    --shadow-glow-sm: 0 0 30px hsl(320 70% 50% / 0.1);
+    --shadow-card: 0 4px 20px hsl(220 25% 10% / 0.08);
+    --shadow-elevated: 0 8px 30px hsl(220 25% 10% / 0.12);
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 220 20% 10%;
+    --sidebar-primary: 320 70% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 15% 94%;
+    --sidebar-accent-foreground: 220 20% 10%;
+    --sidebar-border: 220 15% 88%;
+    --sidebar-ring: 170 70% 40%;
+  }
+
+  .dark {
+    /* Dark theme - Deep navy with vibrant accents */
     --background: 220 25% 6%;
     --foreground: 210 20% 95%;
 
@@ -16,7 +78,6 @@
     --popover: 220 25% 9%;
     --popover-foreground: 210 20% 95%;
 
-    /* Main gradient colors - Cyan/Teal to Pink/Magenta */
     --primary: 320 70% 60%;
     --primary-foreground: 220 25% 6%;
 
@@ -38,8 +99,6 @@
     --border: 220 20% 14%;
     --input: 220 20% 14%;
     --ring: 170 70% 45%;
-
-    --radius: 0.75rem;
 
     /* Gradient tokens - Cyan to Pink */
     --gradient-aurora: linear-gradient(135deg, hsl(320 70% 60%), hsl(170 70% 45%));
@@ -56,48 +115,6 @@
     --shadow-glow-sm: 0 0 30px hsl(320 70% 60% / 0.15);
     --shadow-card: 0 20px 40px hsl(220 25% 3% / 0.5);
     --shadow-elevated: 0 30px 60px hsl(220 25% 3% / 0.6);
-
-    --sidebar-background: 220 25% 9%;
-    --sidebar-foreground: 210 20% 95%;
-    --sidebar-primary: 320 70% 60%;
-    --sidebar-primary-foreground: 220 25% 6%;
-    --sidebar-accent: 220 20% 12%;
-    --sidebar-accent-foreground: 210 20% 95%;
-    --sidebar-border: 220 20% 14%;
-    --sidebar-ring: 170 70% 45%;
-  }
-
-  .dark {
-    --background: 220 25% 6%;
-    --foreground: 210 20% 95%;
-
-    --card: 220 25% 9%;
-    --card-foreground: 210 20% 95%;
-
-    --popover: 220 25% 9%;
-    --popover-foreground: 210 20% 95%;
-
-    --primary: 320 70% 60%;
-    --primary-foreground: 220 25% 6%;
-
-    --secondary: 170 70% 45%;
-    --secondary-foreground: 220 25% 6%;
-
-    --tertiary: 200 80% 55%;
-    --tertiary-foreground: 220 25% 6%;
-
-    --muted: 220 20% 15%;
-    --muted-foreground: 220 15% 55%;
-
-    --accent: 320 70% 60%;
-    --accent-foreground: 220 25% 6%;
-
-    --destructive: 0 72% 55%;
-    --destructive-foreground: 0 0% 95%;
-
-    --border: 220 20% 14%;
-    --input: 220 20% 14%;
-    --ring: 170 70% 45%;
 
     --sidebar-background: 220 25% 9%;
     --sidebar-foreground: 210 20% 95%;

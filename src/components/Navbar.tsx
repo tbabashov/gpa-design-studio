@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Calculator, User, LogOut, LayoutDashboard } from 'lucide-react';
+import { Menu, X, Calculator, User, LogOut, LayoutDashboard, Settings } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import EasyGPALogo from './EasyGPALogo';
+import ThemeToggle from './ThemeToggle';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -94,6 +95,7 @@ const Navbar = ({ onNavigate }: NavbarProps) => {
               transition={{ delay: 0.5 }}
               className="hidden md:flex items-center gap-3"
             >
+              <ThemeToggle />
               {user ? (
                 <DropdownMenu modal={false}>
                   <DropdownMenuTrigger asChild>
@@ -109,6 +111,10 @@ const Navbar = ({ onNavigate }: NavbarProps) => {
                     <DropdownMenuItem onClick={() => navigate('/dashboard')}>
                       <LayoutDashboard className="w-4 h-4 mr-2" />
                       Dashboard
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => navigate('/profile')}>
+                      <Settings className="w-4 h-4 mr-2" />
+                      Profile Settings
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem 
@@ -135,7 +141,7 @@ const Navbar = ({ onNavigate }: NavbarProps) => {
                 variant="default" 
                 size="default"
                 onClick={() => handleNavClick('calculator')}
-                className="bg-white text-background hover:bg-white/90 font-semibold"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold"
               >
                 <Calculator className="w-4 h-4" />
                 Start Calculating
@@ -251,7 +257,7 @@ const Navbar = ({ onNavigate }: NavbarProps) => {
                 >
                   <Button 
                     variant="default" 
-                    className="w-full bg-white text-background hover:bg-white/90 font-semibold"
+                    className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-semibold"
                     onClick={() => handleNavClick('calculator')}
                   >
                     <Calculator className="w-4 h-4" />
