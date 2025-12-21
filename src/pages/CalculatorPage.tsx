@@ -4,15 +4,14 @@ import { Button } from '@/components/ui/button';
 import { 
   Plus, 
   Trash2, 
-  GripVertical, 
-  ChevronDown, 
-  ChevronUp,
-  BookOpen,
-  User,
-  Info
+  ChevronDown,
+  TrendingUp,
+  RotateCcw,
+  Save
 } from 'lucide-react';
 import { toast } from 'sonner';
-import EasyGPALogo from '@/components/EasyGPALogo';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 
 interface Assignment {
   id: string;
@@ -73,6 +72,8 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
     return { profiles: [], activeProfileId: null };
   });
 
+  const [newProfileName, setNewProfileName] = useState('');
+
   useEffect(() => {
     localStorage.setItem('easygpa_state', JSON.stringify(state));
   }, [state]);
@@ -108,13 +109,17 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
     return totalCredits > 0 ? totalPoints / totalCredits : 0;
   }, [activeProfile, calculateCourseGPA]);
 
+  const getTotalCredits = () => {
+    if (!activeProfile) return 0;
+    return activeProfile.courses.reduce((sum, c) => sum + c.credits, 0);
+  };
+
   const createProfile = () => {
-    const name = prompt('Enter profile name:');
-    if (!name) return;
+    if (!newProfileName.trim()) return;
     
     const newProfile: Profile = {
       id: generateId(),
-      name,
+      name: newProfileName.trim(),
       courses: [],
     };
     
@@ -122,6 +127,7 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
       profiles: [...prev.profiles, newProfile],
       activeProfileId: newProfile.id,
     }));
+    setNewProfileName('');
     toast.success('Profile created!');
   };
 
@@ -135,6 +141,21 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
     toast.success('Profile deleted');
   };
 
+  const resetProfile = () => {
+    if (!activeProfile) return;
+    if (!confirm('Reset all courses in this profile?')) return;
+    
+    setState(prev => ({
+      ...prev,
+      profiles: prev.profiles.map(p =>
+        p.id === prev.activeProfileId
+          ? { ...p, courses: [] }
+          : p
+      ),
+    }));
+    toast.success('Profile reset');
+  };
+
   const addCourse = () => {
     if (!activeProfile) {
       toast.error('Create a profile first');
@@ -143,7 +164,7 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
     
     const newCourse: Course = {
       id: generateId(),
-      name: 'New Course',
+      name: '',
       credits: 3,
       assignments: [],
       isCollapsed: false,
@@ -176,8 +197,6 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
   };
 
   const deleteCourse = (courseId: string) => {
-    if (!confirm('Delete this course?')) return;
-    
     setState(prev => ({
       ...prev,
       profiles: prev.profiles.map(p =>
@@ -266,62 +285,101 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
     }));
   };
 
-  const reorderAssignments = (courseId: string, newOrder: Assignment[]) => {
-    setState(prev => ({
-      ...prev,
-      profiles: prev.profiles.map(p =>
-        p.id === prev.activeProfileId
-          ? {
-              ...p,
-              courses: p.courses.map(c =>
-                c.id === courseId ? { ...c, assignments: newOrder } : c
-              ),
-            }
-          : p
-      ),
-    }));
+  const handleNavigate = (section: string) => {
+    if (section === 'home') {
+      onNavigateHome();
+    } else if (section === 'calculator') {
+      // Already on calculator
+    } else {
+      onNavigateHome();
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('navigate', { detail: section }));
+      }, 100);
+    }
   };
 
   return (
-    <div className="min-h-screen pb-24">
-      {/* Header */}
-      <header className="sticky top-0 z-50 glass border-b border-border/50">
-        <div className="container mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <EasyGPALogo size="sm" onClick={onNavigateHome} />
-            <span className="text-muted-foreground">|</span>
-            <span className="text-sm font-medium text-muted-foreground">Calculator</span>
+    <div className="min-h-screen flex flex-col">
+      <Navbar onNavigate={handleNavigate} />
+      
+      <main className="flex-1 pt-24 pb-16">
+        <div className="container mx-auto px-6 lg:px-8">
+          {/* Header */}
+          <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-display font-bold mb-4">
+              <span className="text-foreground">Advanced </span>
+              <span className="gradient-text">GPA Calculator</span>
+            </h1>
+            <p className="text-muted-foreground text-lg">
+              Track multiple profiles, add assignments, and watch your GPA update in real-time.
+            </p>
           </div>
-          <div className="flex items-center gap-3">
-            <Button variant="hero" size="sm" onClick={createProfile}>
-              <Plus className="w-4 h-4" />
-              New Profile
-            </Button>
-          </div>
-        </div>
-      </header>
 
-      <main className="container mx-auto px-6 py-8">
-        {/* Profiles */}
-        <div className="mb-8">
-          <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-            <User className="w-5 h-5 text-primary" />
-            Profiles
-          </h2>
-          <div className="flex flex-wrap gap-2">
-            {state.profiles.length === 0 ? (
-              <p className="text-muted-foreground">No profiles yet. Create one to get started!</p>
-            ) : (
-              state.profiles.map(profile => (
+          {/* GPA Summary Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="rounded-2xl p-6 mb-10"
+            style={{
+              background: 'linear-gradient(135deg, hsl(var(--muted)) 0%, hsl(var(--card)) 50%, hsl(260 30% 15%) 100%)'
+            }}
+          >
+            <div className="flex flex-wrap items-center justify-between gap-6">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-xl bg-primary/20 flex items-center justify-center">
+                  <TrendingUp className="w-7 h-7 text-primary" />
+                </div>
+                <div>
+                  <p className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-1">Current GPA</p>
+                  <div className="flex items-baseline gap-3">
+                    <span className="text-4xl font-display font-bold gradient-text">
+                      {calculateOverallGPA().toFixed(2)}
+                    </span>
+                    <span className="text-muted-foreground text-sm">
+                      {activeProfile?.courses.length || 0} courses {getTotalCredits()} credits
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={resetProfile}
+                  disabled={!activeProfile}
+                  className="border-border/50"
+                >
+                  <RotateCcw className="w-4 h-4 mr-2" />
+                  Reset
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  className="border-primary/50 text-primary hover:bg-primary/10"
+                >
+                  <Save className="w-4 h-4 mr-2" />
+                  Saved
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Profiles Section */}
+          <div className="mb-8">
+            <h2 className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-4">
+              Profiles
+            </h2>
+            <div className="flex flex-wrap gap-2 mb-4">
+              {state.profiles.map(profile => (
                 <motion.button
                   key={profile.id}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => setState(prev => ({ ...prev, activeProfileId: profile.id }))}
-                  className={`px-4 py-2 rounded-full flex items-center gap-2 transition-all ${
+                  className={`px-4 py-2 rounded-full flex items-center gap-2 transition-all text-sm font-medium ${
                     profile.id === state.activeProfileId
-                      ? 'bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold'
-                      : 'bg-muted/50 text-foreground hover:bg-muted'
+                      ? 'bg-gradient-to-r from-primary to-secondary text-primary-foreground'
+                      : 'bg-muted/50 text-foreground hover:bg-muted border border-border/50'
                   }`}
                 >
                   <span>{profile.name}</span>
@@ -330,34 +388,36 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                       e.stopPropagation();
                       deleteProfile(profile.id);
                     }}
-                    className="opacity-60 hover:opacity-100 transition-opacity"
+                    className="opacity-60 hover:opacity-100 transition-opacity ml-1"
                   >
                     ×
                   </button>
                 </motion.button>
-              ))
-            )}
-          </div>
-        </div>
-
-        {/* Courses */}
-        {activeProfile && (
-          <div className="space-y-6">
-            {activeProfile.courses.length === 0 ? (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="text-center py-16 glass-card rounded-2xl"
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={newProfileName}
+                onChange={(e) => setNewProfileName(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && createProfile()}
+                placeholder="New profile name..."
+                className="flex-1 px-4 py-3 rounded-xl bg-muted/30 border border-border/50 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
+              />
+              <Button 
+                variant="default" 
+                size="icon" 
+                onClick={createProfile}
+                className="h-12 w-12 rounded-xl bg-primary hover:bg-primary/90"
               >
-                <BookOpen className="w-16 h-16 mx-auto text-muted-foreground/50 mb-4" />
-                <h3 className="text-xl font-semibold text-foreground mb-2">No courses yet</h3>
-                <p className="text-muted-foreground mb-6">Add your first course to start tracking your GPA</p>
-                <Button variant="hero" onClick={addCourse}>
-                  <Plus className="w-4 h-4" />
-                  Add Course
-                </Button>
-              </motion.div>
-            ) : (
+                <Plus className="w-5 h-5" />
+              </Button>
+            </div>
+          </div>
+
+          {/* Courses */}
+          {activeProfile && (
+            <div className="space-y-6">
               <Reorder.Group
                 axis="y"
                 values={activeProfile.courses}
@@ -371,65 +431,33 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                     <Reorder.Item
                       key={course.id}
                       value={course}
-                      className="glass-card rounded-2xl p-6 cursor-grab active:cursor-grabbing"
+                      className="rounded-2xl border border-border/50 overflow-hidden cursor-grab active:cursor-grabbing"
                     >
                       <motion.div layout>
                         {/* Course Header */}
-                        <div className="flex flex-wrap items-center gap-4 mb-4">
-                          <GripVertical className="w-5 h-5 text-muted-foreground flex-shrink-0" />
-                          
+                        <div className="p-4 border-b border-border/30">
+                          <div className="flex items-center gap-3 mb-3">
+                            <button
+                              onClick={() => updateCourse(course.id, { isCollapsed: !course.isCollapsed })}
+                              className="text-muted-foreground hover:text-foreground transition-colors"
+                            >
+                              <ChevronDown className={`w-5 h-5 transition-transform ${course.isCollapsed ? '-rotate-90' : ''}`} />
+                            </button>
+                            <span className="text-xs text-muted-foreground uppercase tracking-wider">Course Name</span>
+                          </div>
                           <input
                             type="text"
                             value={course.name}
                             onChange={(e) => updateCourse(course.id, { name: e.target.value })}
-                            className="flex-1 min-w-[200px] px-4 py-3 rounded-xl bg-gradient-to-br from-primary/10 to-secondary/10 border border-primary/30 text-lg font-semibold text-foreground focus:outline-none focus:border-primary/50"
-                            placeholder="Course name"
+                            className="w-full px-4 py-3 rounded-xl text-lg font-medium text-foreground focus:outline-none"
+                            style={{
+                              background: 'linear-gradient(90deg, hsl(var(--primary) / 0.2) 0%, hsl(180 60% 30% / 0.3) 100%)'
+                            }}
+                            placeholder="Enter course name"
                           />
-                          
-                          <input
-                            type="number"
-                            value={course.credits}
-                            onChange={(e) => updateCourse(course.id, { credits: parseInt(e.target.value) || 1 })}
-                            min="1"
-                            max="12"
-                            className="w-24 px-4 py-3 rounded-xl bg-muted/50 border border-border text-foreground focus:outline-none focus:border-primary/50"
-                            placeholder="Credits"
-                          />
-                          
-                          <div className="flex items-center gap-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => addAssignment(course.id)}
-                            >
-                              <Plus className="w-4 h-4" />
-                              Assignment
-                            </Button>
-                            
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => updateCourse(course.id, { isCollapsed: !course.isCollapsed })}
-                            >
-                              {course.isCollapsed ? (
-                                <ChevronDown className="w-4 h-4" />
-                              ) : (
-                                <ChevronUp className="w-4 h-4" />
-                              )}
-                            </Button>
-                            
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => deleteCourse(course.id)}
-                              className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          </div>
                         </div>
 
-                        {/* Assignments */}
+                        {/* Course Content */}
                         <AnimatePresence>
                           {!course.isCollapsed && (
                             <motion.div
@@ -439,57 +467,66 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                               transition={{ duration: 0.3 }}
                               className="overflow-hidden"
                             >
-                              {course.assignments.length > 0 && (
-                                <Reorder.Group
-                                  axis="y"
-                                  values={course.assignments}
-                                  onReorder={(newOrder) => reorderAssignments(course.id, newOrder)}
-                                  className="space-y-3 mt-4"
-                                >
+                              <div className="p-4">
+                                {/* Credits Row */}
+                                <div className="flex items-center gap-4 mb-6">
+                                  <div>
+                                    <span className="text-xs text-muted-foreground uppercase tracking-wider block mb-2">Credits</span>
+                                    <input
+                                      type="number"
+                                      value={course.credits}
+                                      onChange={(e) => updateCourse(course.id, { credits: parseInt(e.target.value) || 1 })}
+                                      min="1"
+                                      max="12"
+                                      className="w-20 px-4 py-2 rounded-lg bg-muted/50 border border-border/50 text-foreground text-center focus:outline-none focus:border-primary/50"
+                                    />
+                                  </div>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => deleteCourse(course.id)}
+                                    className="text-destructive hover:text-destructive hover:bg-destructive/10 mt-6"
+                                  >
+                                    <Trash2 className="w-5 h-5" />
+                                  </Button>
+                                </div>
+
+                                {/* Assignments Section */}
+                                <div className="mb-4">
+                                  <h3 className="text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-4">
+                                    Assignments
+                                  </h3>
+                                  
                                   {course.assignments.map(assignment => (
-                                    <Reorder.Item
+                                    <div 
                                       key={assignment.id}
-                                      value={assignment}
-                                      className="flex flex-wrap items-center gap-3 p-4 rounded-xl bg-muted/30 hover:bg-muted/50 transition-colors cursor-grab active:cursor-grabbing"
+                                      className="flex flex-wrap items-center gap-3 p-4 rounded-xl border border-border/30 mb-3"
                                     >
-                                      <GripVertical className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                                      
                                       <input
                                         type="text"
                                         value={assignment.name}
                                         onChange={(e) => updateAssignment(course.id, assignment.id, { name: e.target.value })}
-                                        className="flex-1 min-w-[150px] px-3 py-2 rounded-lg bg-background/50 border border-border/50 text-foreground focus:outline-none focus:border-primary/50"
+                                        className="flex-1 min-w-[200px] px-4 py-2 rounded-lg bg-transparent border border-border/50 text-foreground focus:outline-none focus:border-primary/50"
                                         placeholder="Assignment name"
                                       />
-                                      
                                       <input
                                         type="number"
                                         value={assignment.grade || ''}
                                         onChange={(e) => updateAssignment(course.id, assignment.id, { grade: parseFloat(e.target.value) || 0 })}
                                         min="0"
                                         max="100"
-                                        className="w-24 px-3 py-2 rounded-lg bg-background/50 border border-border/50 text-foreground focus:outline-none focus:border-primary/50"
-                                        placeholder="Grade %"
+                                        className="w-24 px-4 py-2 rounded-lg bg-transparent border border-border/50 text-foreground text-center focus:outline-none focus:border-primary/50"
+                                        placeholder="Score"
                                       />
-                                      
-                                      <div className="relative flex items-center">
-                                        <input
-                                          type="number"
-                                          value={assignment.weight || ''}
-                                          onChange={(e) => updateAssignment(course.id, assignment.id, { weight: parseFloat(e.target.value) || 0 })}
-                                          min="0"
-                                          max="100"
-                                          className="w-24 px-3 py-2 pr-8 rounded-lg bg-background/50 border border-border/50 text-foreground focus:outline-none focus:border-primary/50"
-                                          placeholder="Weight"
-                                        />
-                                        <div 
-                                          className="absolute right-2 w-4 h-4 rounded-full border border-muted-foreground/50 flex items-center justify-center text-[10px] text-muted-foreground cursor-help"
-                                          title="Percentage of overall course grade"
-                                        >
-                                          <Info className="w-3 h-3" />
-                                        </div>
-                                      </div>
-                                      
+                                      <input
+                                        type="number"
+                                        value={assignment.weight || ''}
+                                        onChange={(e) => updateAssignment(course.id, assignment.id, { weight: parseFloat(e.target.value) || 0 })}
+                                        min="0"
+                                        max="100"
+                                        className="w-24 px-4 py-2 rounded-lg bg-transparent border border-border/50 text-foreground text-center focus:outline-none focus:border-primary/50"
+                                        placeholder="Weight"
+                                      />
                                       <Button
                                         variant="ghost"
                                         size="icon"
@@ -498,71 +535,68 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                                       >
                                         <Trash2 className="w-4 h-4" />
                                       </Button>
-                                    </Reorder.Item>
+                                    </div>
                                   ))}
-                                </Reorder.Group>
-                              )}
+
+                                  <button
+                                    onClick={() => addAssignment(course.id)}
+                                    className="w-full py-3 rounded-xl border-2 border-dashed border-border/50 text-muted-foreground hover:border-primary/50 hover:text-foreground transition-colors flex items-center justify-center gap-2"
+                                  >
+                                    <Plus className="w-4 h-4" />
+                                    Add Assignment
+                                  </button>
+                                </div>
+
+                                {/* Course Summary */}
+                                <div className="pt-4 border-t border-border/30 space-y-2">
+                                  <div className="flex items-center justify-between text-sm">
+                                    <span className="text-muted-foreground">Course Score:</span>
+                                    <span className={`font-medium ${isNaN(percentage) ? 'text-destructive' : 'text-primary'}`}>
+                                      {isNaN(percentage) ? 'NaN%' : `${percentage.toFixed(1)}%`}
+                                    </span>
+                                  </div>
+                                  <div className="flex items-center justify-between text-sm">
+                                    <span className="text-muted-foreground">Course GPA:</span>
+                                    <span className="font-medium text-primary">{gpa.toFixed(1)}</span>
+                                  </div>
+                                </div>
+                              </div>
                             </motion.div>
                           )}
                         </AnimatePresence>
-
-                        {/* Course Footer */}
-                        <div className="mt-4 pt-4 border-t border-border/50 flex items-center justify-between text-sm">
-                          <div className="flex items-center gap-6">
-                            <div>
-                              <span className="text-muted-foreground">Course GPA: </span>
-                              <span className="font-semibold text-secondary">{gpa.toFixed(2)}</span>
-                            </div>
-                            <div>
-                              <span className="text-muted-foreground">Percentage: </span>
-                              <span className="font-semibold text-secondary">{percentage.toFixed(1)}%</span>
-                            </div>
-                          </div>
-                        </div>
                       </motion.div>
                     </Reorder.Item>
                   );
                 })}
               </Reorder.Group>
-            )}
 
-            {activeProfile.courses.length > 0 && (
-              <Button variant="outline" onClick={addCourse} className="w-full">
-                <Plus className="w-4 h-4" />
+              {/* Add Course Button */}
+              <button
+                onClick={addCourse}
+                className="w-full py-4 rounded-2xl border-2 border-dashed border-border/50 text-muted-foreground hover:border-primary/50 hover:text-foreground transition-colors flex items-center justify-center gap-2"
+              >
+                <Plus className="w-5 h-5" />
                 Add Course
-              </Button>
-            )}
-          </div>
-        )}
+              </button>
+            </div>
+          )}
 
-        {!activeProfile && state.profiles.length === 0 && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="text-center py-16 glass-card rounded-2xl"
-          >
-            <User className="w-16 h-16 mx-auto text-muted-foreground/50 mb-4" />
-            <h3 className="text-xl font-semibold text-foreground mb-2">Welcome to EasyGPA!</h3>
-            <p className="text-muted-foreground mb-6">Create a profile to start tracking your grades</p>
-            <Button variant="hero" onClick={createProfile}>
-              <Plus className="w-4 h-4" />
-              Create Profile
-            </Button>
-          </motion.div>
-        )}
+          {/* Empty State */}
+          {!activeProfile && state.profiles.length === 0 && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-center py-16 rounded-2xl border border-border/50"
+            >
+              <TrendingUp className="w-16 h-16 mx-auto text-muted-foreground/50 mb-4" />
+              <h3 className="text-xl font-semibold text-foreground mb-2">Welcome to EasyGPA!</h3>
+              <p className="text-muted-foreground mb-6">Create a profile above to start tracking your grades</p>
+            </motion.div>
+          )}
+        </div>
       </main>
 
-      {/* GPA Summary Bar */}
-      <div className="fixed bottom-0 left-0 right-0 glass border-t border-border/50 z-40">
-        <div className="container mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="text-sm text-muted-foreground uppercase tracking-wider font-semibold">
-            Overall GPA
-          </div>
-          <div className="text-3xl font-display font-bold gradient-text">
-            {calculateOverallGPA().toFixed(2)}
-          </div>
-        </div>
-      </div>
+      <Footer onNavigate={handleNavigate} />
     </div>
   );
 };
