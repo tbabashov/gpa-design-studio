@@ -335,12 +335,12 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                                       />
                                       <input
                                         type="number"
-                                        value={assignment.grade ?? ''}
+                                        value={assignment.grade === 0 ? '' : assignment.grade}
                                         onChange={(e) => updateAssignment(course.id, assignment.id, { grade: e.target.value === '' ? 0 : parseFloat(e.target.value) })}
                                         min="0"
                                         max="100"
                                         className="w-16 sm:w-24 px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-transparent border border-border/50 text-foreground text-center focus:outline-none focus:border-primary/50 text-sm sm:text-base"
-                                        placeholder="Score"
+                                        placeholder="0"
                                       />
                                       <input
                                         type="number"
