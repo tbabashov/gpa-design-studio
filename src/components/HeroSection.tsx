@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Calculator, Sparkles } from 'lucide-react';
+import { Calculator, Sparkles, ArrowRight } from 'lucide-react';
 import MiniCalculator from './MiniCalculator';
 
 interface HeroSectionProps {
@@ -63,10 +63,11 @@ const HeroSection = ({ onNavigate }: HeroSectionProps) => {
                 variant="default" 
                 size="xl"
                 onClick={() => onNavigate('calculator')}
-                className="bg-white text-background hover:bg-white/90 font-semibold"
+                className="bg-white text-background hover:bg-white/90 font-semibold group"
               >
                 <Calculator className="w-5 h-5" />
                 Start Calculating
+                <ArrowRight className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" />
               </Button>
               <Button 
                 variant="heroOutline" 

@@ -101,7 +101,7 @@ const FAQSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="max-w-3xl mx-auto glass-card rounded-2xl p-6 lg:p-8"
+          className="max-w-5xl mx-auto glass-card rounded-2xl p-6 lg:p-8"
         >
           {faqs.map((faq, index) => (
             <FAQItem
