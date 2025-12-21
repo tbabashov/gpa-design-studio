@@ -225,7 +225,7 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                 value={newProfileName}
                 onChange={(e) => setNewProfileName(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleCreateProfile()}
-                placeholder="New profile name..."
+                placeholder="New workspace name..."
                 className="flex-1 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl bg-muted/30 border border-border/50 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors text-sm sm:text-base"
               />
               <Button 
