@@ -9,7 +9,7 @@ const reviews = [
   { name: 'Daniel S.', university: 'Harvard University', rating: 5, text: "Adding courses and assignments is super easy. Love the drag and drop!" },
   { name: 'Sophia M.', university: 'UC Berkeley', rating: 5, text: "Helped me calculate my GPA accurately every semester. Highly recommend!" },
   { name: 'Alex T.', university: 'Yale University', rating: 5, text: "Finally a calculator that works exactly how I need it. Perfect for students!" },
-  { name: 'Emily W.', university: 'Princeton', rating: 4, text: "Great app! The profile feature lets me track multiple semesters easily." },
+  { name: 'Emily W.', university: 'Princeton', rating: 4, text: "Great app! The workspace feature lets me track multiple semesters easily." },
   { name: 'Ryan P.', university: 'Columbia University', rating: 5, text: "Clean design, fast calculations, and saves my progress. What more could I ask?" },
 ];
 

@@ -102,7 +102,7 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
     if (!newProfileName.trim()) return;
     createProfile(newProfileName);
     setNewProfileName('');
-    toast.success('Profile created!');
+    toast.success('Workspace created!');
   };
 
   const handleDeleteProfile = (id: string) => {
