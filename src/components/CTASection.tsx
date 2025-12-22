@@ -33,7 +33,7 @@ const CTASection = ({ onNavigate }: CTASectionProps) => {
           
           <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto">
             Join thousands of students who trust EasyGPA for accurate grade calculations. 
-            No sign-up required. Start calculating in seconds.
+            Sign up for free and start calculating in seconds.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
