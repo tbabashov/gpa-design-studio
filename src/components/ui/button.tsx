@@ -22,13 +22,13 @@ const buttonVariants = cva(
         link: 
           "text-primary underline-offset-4 hover:underline",
         hero: 
-          "bg-gradient-to-r from-primary via-secondary to-tertiary text-foreground font-bold shadow-lg hover:shadow-[0_0_40px_hsl(350_70%_65%/_0.3)] hover:-translate-y-1 active:translate-y-0",
+          "bg-gradient-to-r from-primary via-secondary to-tertiary dark:text-white text-black font-bold shadow-lg hover:shadow-[0_0_40px_hsl(350_70%_65%/_0.3)] hover:-translate-y-1 active:translate-y-0",
         heroOutline:
           "border border-border/50 bg-card/50 backdrop-blur-sm text-foreground hover:bg-card/80 hover:border-primary/30 hover:-translate-y-0.5",
         nav:
           "relative bg-transparent text-muted-foreground font-medium hover:text-foreground after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-gradient-to-r after:from-primary after:via-secondary after:to-tertiary after:transition-all after:duration-300 hover:after:w-full",
         glow:
-          "bg-gradient-to-r from-primary to-secondary text-primary-foreground font-bold shadow-[0_0_30px_hsl(350_70%_65%/_0.3)] hover:shadow-[0_0_50px_hsl(350_70%_65%/_0.5)] hover:-translate-y-1",
+          "bg-gradient-to-r from-primary to-secondary dark:text-white text-black font-bold shadow-[0_0_30px_hsl(350_70%_65%/_0.3)] hover:shadow-[0_0_50px_hsl(350_70%_65%/_0.5)] hover:-translate-y-1",
         glass:
           "bg-card/30 backdrop-blur-xl border border-border/50 text-foreground hover:bg-card/50 hover:border-primary/30",
       },
