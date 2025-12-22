@@ -96,7 +96,7 @@ const Navbar = ({ onNavigate }: NavbarProps) => {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.5 }}
-              className="hidden md:flex items-center gap-3"
+              className="hidden md:flex items-center gap-2"
             >
               <ThemeToggle />
               {user ? (
@@ -105,9 +105,9 @@ const Navbar = ({ onNavigate }: NavbarProps) => {
                     <Button 
                       variant="ghost" 
                       size="icon"
-                      className="rounded-full"
+                      className="rounded-full h-10 w-10"
                     >
-                      <User className="w-5 h-5" />
+                      <User className="w-[22px] h-[22px]" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-48">
