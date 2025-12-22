@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
@@ -327,6 +327,18 @@ const AuthPage = () => {
               >
                 {isLogin ? 'Sign up' : 'Sign in'}
               </button>
+            </p>
+
+            {/* Terms and Privacy Agreement */}
+            <p className="mt-4 text-center text-xs text-muted-foreground">
+              By signing in, you agree to our{' '}
+              <Link to="/terms" className="text-primary hover:text-primary/80 underline underline-offset-2">
+                Terms of Service
+              </Link>{' '}
+              and{' '}
+              <Link to="/privacy" className="text-primary hover:text-primary/80 underline underline-offset-2">
+                Privacy Policy
+              </Link>
             </p>
           </div>
 
