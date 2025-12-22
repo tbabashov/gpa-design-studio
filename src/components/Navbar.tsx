@@ -133,11 +133,12 @@ const Navbar = ({ onNavigate }: NavbarProps) => {
                 ) : (
                   <Button 
                     variant="ghost" 
-                    size="icon"
+                    size="default"
                     onClick={() => navigate('/auth')}
-                    className="rounded-full h-10 w-10"
+                    className="text-muted-foreground hover:text-foreground"
                   >
-                    <User className="w-[22px] h-[22px]" />
+                    <User className="w-4 h-4 mr-2" />
+                    Sign In
                   </Button>
                 )}
               </div>
