@@ -69,7 +69,7 @@ const MiniCalculator = () => {
             <Reorder.Item
               key={course.id}
               value={course}
-              className="rounded-xl bg-muted/30 hover:bg-muted/50 transition-colors cursor-grab active:cursor-grabbing"
+              className="rounded-xl bg-muted/30 hover:bg-muted/50 hover:shadow-lg hover:shadow-primary/20 hover:scale-[1.02] transition-all duration-200 cursor-grab active:cursor-grabbing"
             >
               <div className="p-2 sm:p-3">
                 {/* Course Header */}
