@@ -155,9 +155,9 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="rounded-2xl p-4 sm:p-6 mb-8 sm:mb-10"
+            className="rounded-2xl p-4 sm:p-6 mb-8 sm:mb-10 border border-border/30"
             style={{
-              background: 'linear-gradient(135deg, hsl(var(--muted)) 0%, hsl(var(--card)) 50%, hsl(260 30% 15%) 100%)'
+              background: 'linear-gradient(135deg, hsl(var(--muted)) 0%, hsl(var(--card)) 50%, hsl(var(--muted)) 100%)'
             }}
           >
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6">
