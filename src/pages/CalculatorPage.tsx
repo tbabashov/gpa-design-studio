@@ -106,9 +106,9 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
   };
 
   const handleDeleteProfile = (id: string) => {
-    if (!confirm('Delete this profile?')) return;
+    if (!confirm('Delete this workspace?')) return;
     deleteProfile(id);
-    toast.success('Profile deleted');
+    toast.success('Workspace deleted');
   };
 
   const handleResetProfile = () => {
