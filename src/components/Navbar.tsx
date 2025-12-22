@@ -146,7 +146,7 @@ const Navbar = ({ onNavigate }: NavbarProps) => {
                 variant="default" 
                 size="default"
                 onClick={() => handleNavClick('calculator')}
-                className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold"
+                className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold animate-pulse-glow"
               >
                 <Calculator className="w-4 h-4" />
                 Start Calculating
