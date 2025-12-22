@@ -14,13 +14,13 @@ const ThemeToggle = () => {
       variant="ghost"
       size="icon"
       onClick={toggleTheme}
-      className="rounded-full"
+      className="rounded-full h-10 w-10"
       aria-label="Toggle theme"
     >
       {resolvedTheme === 'dark' ? (
-        <Sun className="w-5 h-5" />
+        <Sun className="w-[22px] h-[22px]" />
       ) : (
-        <Moon className="w-5 h-5" />
+        <Moon className="w-[22px] h-[22px]" />
       )}
     </Button>
   );
