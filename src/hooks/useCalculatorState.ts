@@ -9,12 +9,16 @@ export interface Assignment {
   weight: number;
 }
 
+export type CourseInputMode = 'assignments' | 'letterGrade';
+
 export interface Course {
   id: string;
   name: string;
   credits: number;
   assignments: Assignment[];
   isCollapsed: boolean;
+  inputMode: CourseInputMode;
+  manualGrade?: number; // 0-100 percentage when using letterGrade mode
 }
 
 export interface Profile {
@@ -67,6 +71,7 @@ const getInitialState = (): CalculatorState => {
         name: 'Mathematics', 
         credits: 4, 
         isCollapsed: true,
+        inputMode: 'assignments',
         assignments: [
           { id: generateId(), name: 'Midterm', grade: 95, weight: 40 },
           { id: generateId(), name: 'Final', grade: 92, weight: 60 },
@@ -77,6 +82,7 @@ const getInitialState = (): CalculatorState => {
         name: 'Physics', 
         credits: 3,
         isCollapsed: true,
+        inputMode: 'assignments',
         assignments: [
           { id: generateId(), name: 'Lab Report', grade: 88, weight: 30 },
           { id: generateId(), name: 'Exam', grade: 85, weight: 70 },
@@ -241,6 +247,13 @@ export const useCalculatorState = () => {
   const activeProfile = state.profiles.find(p => p.id === state.activeProfileId);
 
   const calculateCourseGPA = useCallback((course: Course) => {
+    // If using manual letter grade mode
+    if (course.inputMode === 'letterGrade') {
+      const percentage = course.manualGrade ?? 0;
+      return { percentage, gpa: toGPA(Math.round(percentage)) };
+    }
+    
+    // Assignment-based calculation
     if (course.assignments.length === 0) return { percentage: 0, gpa: 0 };
     
     const totalWeight = course.assignments.reduce((sum, a) => sum + (a.weight || 0), 0);
@@ -323,6 +336,8 @@ export const useCalculatorState = () => {
       credits: 6,
       assignments: [],
       isCollapsed: false,
+      inputMode: 'assignments',
+      manualGrade: undefined,
     };
     
     setState(prev => ({
