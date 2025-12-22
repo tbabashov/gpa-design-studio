@@ -11,6 +11,9 @@ const reviews = [
   { name: 'Alex T.', university: 'Yale University', rating: 5, text: "Finally a calculator that works exactly how I need it. Perfect for students!" },
   { name: 'Emily W.', university: 'Princeton', rating: 4, text: "Great app! The workspace feature lets me track multiple semesters easily." },
   { name: 'Ryan P.', university: 'Columbia University', rating: 5, text: "Clean design, fast calculations, and saves my progress. What more could I ask?" },
+  { name: 'Jordan H.', university: 'Duke University', rating: 5, text: "The what-if calculator helped me plan my semester perfectly. Game changer!" },
+  { name: 'Mia C.', university: 'Northwestern University', rating: 5, text: "So much better than spreadsheets. I use it every week to track my progress." },
+  { name: 'Ethan B.', university: 'University of Michigan', rating: 4, text: "Love how I can export my GPA reports. Makes academic planning so much easier." },
 ];
 
 const ReviewCard = ({ review }: { review: typeof reviews[0] }) => (
