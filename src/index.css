@@ -297,12 +297,10 @@
 
 @keyframes pulse-glow {
   0%, 100% { 
-    box-shadow: 0 0 15px hsl(320 70% 60% / 0.4), 0 0 30px hsl(320 70% 60% / 0.2);
-    transform: scale(1);
+    box-shadow: 0 0 10px hsl(320 70% 60% / 0.25);
   }
   50% { 
-    box-shadow: 0 0 25px hsl(320 70% 60% / 0.6), 0 0 50px hsl(320 70% 60% / 0.3);
-    transform: scale(1.02);
+    box-shadow: 0 0 20px hsl(320 70% 60% / 0.4);
   }
 }
 
