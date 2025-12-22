@@ -13,6 +13,8 @@ import ProfileSettingsPage from "./pages/ProfileSettingsPage";
 import CalculatorPage from "./pages/CalculatorPage";
 import FeaturesPage from "./pages/FeaturesPage";
 import ContactPage from "./pages/ContactPage";
+import TermsPage from "./pages/TermsPage";
+import PrivacyPage from "./pages/PrivacyPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -46,6 +48,8 @@ const App = () => {
                   <Route path="/calculator" element={<CalculatorPage onNavigateHome={handleNavigateHome} />} />
                   <Route path="/features" element={<FeaturesPage onNavigate={handleNavigate} />} />
                   <Route path="/contact" element={<ContactPage onNavigate={handleNavigate} />} />
+                  <Route path="/terms" element={<TermsPage />} />
+                  <Route path="/privacy" element={<PrivacyPage />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
