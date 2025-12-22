@@ -148,7 +148,7 @@ const ContactPage = ({ onNavigate }: ContactPageProps) => {
                   Send us a Message
                 </h2>
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid sm:grid-cols-2 gap-6">
+                  <div className="space-y-6">
                     <div>
                       <label className="block text-sm font-medium mb-2">Your Name</label>
                       <input
@@ -205,28 +205,28 @@ const ContactPage = ({ onNavigate }: ContactPageProps) => {
                 transition={{ duration: 0.6 }}
                 className="space-y-8"
               >
-                <div className="p-8 rounded-2xl glass-card">
+                <div className="p-6 sm:p-8 rounded-2xl glass-card overflow-hidden">
                   <h3 className="text-xl font-display font-bold mb-4">Why EasyGPA?</h3>
-                  <p className="text-muted-foreground leading-relaxed mb-6">
+                  <p className="text-muted-foreground leading-relaxed mb-6 break-words">
                     We built EasyGPA because we believe every student deserves a simple, beautiful tool to track their academic progress. Sign in to sync across devices or use it locally — your choice.
                   </p>
                   <div className="space-y-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-2 h-2 rounded-full bg-primary" />
+                    <div className="flex items-start gap-3">
+                      <div className="w-2 h-2 rounded-full bg-primary mt-2 shrink-0" />
                       <span className="text-muted-foreground">100% Free, forever</span>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-2 h-2 rounded-full bg-secondary" />
+                    <div className="flex items-start gap-3">
+                      <div className="w-2 h-2 rounded-full bg-secondary mt-2 shrink-0" />
                       <span className="text-muted-foreground">Sign in with Google or Microsoft</span>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-2 h-2 rounded-full bg-tertiary" />
+                    <div className="flex items-start gap-3">
+                      <div className="w-2 h-2 rounded-full bg-tertiary mt-2 shrink-0" />
                       <span className="text-muted-foreground">Your data is encrypted & secure</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="p-8 rounded-2xl glass-card">
+                <div className="p-6 sm:p-8 rounded-2xl glass-card">
                   <h3 className="text-xl font-display font-bold mb-4">Follow Us</h3>
                   <p className="text-muted-foreground mb-6">
                     Stay updated with the latest features and tips.
@@ -245,18 +245,18 @@ const ContactPage = ({ onNavigate }: ContactPageProps) => {
                   </div>
                 </div>
 
-                <div className="p-8 rounded-2xl glass-card">
+                <div className="p-6 sm:p-8 rounded-2xl glass-card">
                   <h3 className="text-xl font-display font-bold mb-4">Newsletter</h3>
                   <p className="text-muted-foreground mb-4">
                     Get tips on improving your academic performance.
                   </p>
-                  <div className="flex gap-2">
+                  <div className="flex flex-col sm:flex-row gap-2">
                     <input
                       type="email"
                       placeholder="Enter your email"
-                      className="flex-1 px-4 py-2.5 rounded-xl bg-muted/50 border border-border/50 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
+                      className="flex-1 min-w-0 px-4 py-2.5 rounded-xl bg-muted/50 border border-border/50 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
                     />
-                    <Button variant="hero">
+                    <Button variant="hero" className="shrink-0">
                       Subscribe
                     </Button>
                   </div>
