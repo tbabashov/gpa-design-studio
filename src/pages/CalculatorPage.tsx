@@ -9,7 +9,9 @@ import {
   RotateCcw,
   Save,
   Loader2,
-  GripVertical
+  GripVertical,
+  ToggleLeft,
+  ToggleRight
 } from 'lucide-react';
 import { toast } from 'sonner';
 import Navbar from '@/components/Navbar';
@@ -351,74 +353,119 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                                   </Button>
                                 </div>
 
-                                {/* Assignments Section */}
+                                {/* Input Mode Toggle */}
                                 <div className="mb-4">
-                                  <h3 className="text-[10px] sm:text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-3 sm:mb-4">
-                                    Assignments
-                                  </h3>
-                                  
-                                  <Reorder.Group
-                                    axis="y"
-                                    values={course.assignments}
-                                    onReorder={(newOrder) => reorderAssignments(course.id, newOrder)}
-                                    className="space-y-3"
-                                  >
-                                    {course.assignments.map(assignment => (
-                                      <Reorder.Item
-                                        key={assignment.id}
-                                        value={assignment}
-                                        className="flex flex-wrap items-center gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl border border-border/30 cursor-grab active:cursor-grabbing bg-background/50"
-                                      >
-                                        <GripVertical className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                                        <input
-                                          type="text"
-                                          value={assignment.name}
-                                          onChange={(e) => updateAssignment(course.id, assignment.id, { name: e.target.value })}
-                                          className="flex-1 min-w-[120px] sm:min-w-[200px] px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-transparent border border-border/50 text-foreground focus:outline-none focus:border-primary/50 text-sm sm:text-base"
-                                          placeholder="Assignment name"
-                                        />
-                                        <input
-                                          type="number"
-                                          value={assignment.grade ?? ''}
-                                          onChange={(e) =>
-                                            updateAssignment(course.id, assignment.id, {
-                                              grade: e.target.value === '' ? null : parseFloat(e.target.value),
-                                            })
-                                          }
-                                          min="0"
-                                          max="100"
-                                          className="w-16 sm:w-24 px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-transparent border border-border/50 text-foreground text-center focus:outline-none focus:border-primary/50 text-sm sm:text-base"
-                                          placeholder="Score"
-                                        />
-                                        <input
-                                          type="number"
-                                          value={assignment.weight || ''}
-                                          onChange={(e) => updateAssignment(course.id, assignment.id, { weight: parseFloat(e.target.value) || 0 })}
-                                          min="0"
-                                          max="100"
-                                          className="w-16 sm:w-24 px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-transparent border border-border/50 text-foreground text-center focus:outline-none focus:border-primary/50 text-sm sm:text-base"
-                                          placeholder="Weight"
-                                        />
-                                        <Button
-                                          variant="ghost"
-                                          size="icon"
-                                          onClick={() => deleteAssignment(course.id, assignment.id)}
-                                          className="text-destructive hover:text-destructive hover:bg-destructive/10 h-8 w-8 sm:h-10 sm:w-10"
-                                        >
-                                          <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
-                                        </Button>
-                                      </Reorder.Item>
-                                    ))}
-                                  </Reorder.Group>
-
                                   <button
-                                    onClick={() => addAssignment(course.id)}
-                                    className="w-full py-2.5 sm:py-3 rounded-xl border-2 border-dashed border-border/50 text-muted-foreground hover:border-primary/50 hover:text-foreground transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
+                                    onClick={() => updateCourse(course.id, { 
+                                      inputMode: (course.inputMode || 'assignments') === 'assignments' ? 'letterGrade' : 'assignments' 
+                                    })}
+                                    className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-lg bg-muted/30 border border-border/30"
                                   >
-                                    <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
-                                    Add Assignment
+                                    {(course.inputMode || 'assignments') === 'assignments' ? (
+                                      <ToggleLeft className="w-4 h-4" />
+                                    ) : (
+                                      <ToggleRight className="w-4 h-4 text-primary" />
+                                    )}
+                                    <span>
+                                      {(course.inputMode || 'assignments') === 'assignments' 
+                                        ? 'Using Assignments' 
+                                        : 'Using Letter Grade'}
+                                    </span>
                                   </button>
                                 </div>
+
+                                {(course.inputMode || 'assignments') === 'letterGrade' ? (
+                                  /* Manual Letter Grade Input */
+                                  <div className="mb-4">
+                                    <h3 className="text-[10px] sm:text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-3 sm:mb-4">
+                                      Final Grade
+                                    </h3>
+                                    <div className="flex items-center gap-3 p-4 rounded-xl border border-border/30 bg-background/50">
+                                      <span className="text-sm text-muted-foreground">Enter your grade:</span>
+                                      <input
+                                        type="number"
+                                        value={course.manualGrade ?? ''}
+                                        onChange={(e) => updateCourse(course.id, { 
+                                          manualGrade: e.target.value === '' ? undefined : parseFloat(e.target.value) 
+                                        })}
+                                        min="0"
+                                        max="100"
+                                        className="w-20 sm:w-24 px-3 py-2 rounded-lg bg-muted/50 border border-border/50 text-foreground text-center focus:outline-none focus:border-primary/50 text-sm sm:text-base"
+                                        placeholder="0-100"
+                                      />
+                                      <span className="text-sm text-muted-foreground">%</span>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  /* Assignments Section */
+                                  <div className="mb-4">
+                                    <h3 className="text-[10px] sm:text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-3 sm:mb-4">
+                                      Assignments
+                                    </h3>
+                                    
+                                    <Reorder.Group
+                                      axis="y"
+                                      values={course.assignments}
+                                      onReorder={(newOrder) => reorderAssignments(course.id, newOrder)}
+                                      className="space-y-3"
+                                    >
+                                      {course.assignments.map(assignment => (
+                                        <Reorder.Item
+                                          key={assignment.id}
+                                          value={assignment}
+                                          className="flex flex-wrap items-center gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl border border-border/30 cursor-grab active:cursor-grabbing bg-background/50"
+                                        >
+                                          <GripVertical className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                                          <input
+                                            type="text"
+                                            value={assignment.name}
+                                            onChange={(e) => updateAssignment(course.id, assignment.id, { name: e.target.value })}
+                                            className="flex-1 min-w-[120px] sm:min-w-[200px] px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-transparent border border-border/50 text-foreground focus:outline-none focus:border-primary/50 text-sm sm:text-base"
+                                            placeholder="Assignment name"
+                                          />
+                                          <input
+                                            type="number"
+                                            value={assignment.grade ?? ''}
+                                            onChange={(e) =>
+                                              updateAssignment(course.id, assignment.id, {
+                                                grade: e.target.value === '' ? null : parseFloat(e.target.value),
+                                              })
+                                            }
+                                            min="0"
+                                            max="100"
+                                            className="w-16 sm:w-24 px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-transparent border border-border/50 text-foreground text-center focus:outline-none focus:border-primary/50 text-sm sm:text-base"
+                                            placeholder="Score"
+                                          />
+                                          <input
+                                            type="number"
+                                            value={assignment.weight || ''}
+                                            onChange={(e) => updateAssignment(course.id, assignment.id, { weight: parseFloat(e.target.value) || 0 })}
+                                            min="0"
+                                            max="100"
+                                            className="w-16 sm:w-24 px-2 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-transparent border border-border/50 text-foreground text-center focus:outline-none focus:border-primary/50 text-sm sm:text-base"
+                                            placeholder="Weight"
+                                          />
+                                          <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => deleteAssignment(course.id, assignment.id)}
+                                            className="text-destructive hover:text-destructive hover:bg-destructive/10 h-8 w-8 sm:h-10 sm:w-10"
+                                          >
+                                            <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
+                                          </Button>
+                                        </Reorder.Item>
+                                      ))}
+                                    </Reorder.Group>
+
+                                    <button
+                                      onClick={() => addAssignment(course.id)}
+                                      className="w-full py-2.5 sm:py-3 rounded-xl border-2 border-dashed border-border/50 text-muted-foreground hover:border-primary/50 hover:text-foreground transition-colors flex items-center justify-center gap-2 text-sm sm:text-base mt-3"
+                                    >
+                                      <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
+                                      Add Assignment
+                                    </button>
+                                  </div>
+                                )}
 
                                 {/* Course Summary */}
                                 <div className="pt-3 sm:pt-4 border-t border-border/30 space-y-2">

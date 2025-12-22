@@ -6,7 +6,9 @@ import {
   Trash2, 
   GripVertical,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  ToggleLeft,
+  ToggleRight
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCalculatorState, Assignment } from '@/hooks/useCalculatorState';
@@ -114,7 +116,7 @@ const MiniCalculator = () => {
                   </button>
                 </div>
 
-                {/* Assignments */}
+                {/* Input Mode Toggle & Content */}
                 <AnimatePresence>
                   {!course.isCollapsed && (
                     <motion.div
@@ -124,61 +126,98 @@ const MiniCalculator = () => {
                       transition={{ duration: 0.2 }}
                       className="overflow-hidden"
                     >
-                      <div className="mt-2 ml-2 sm:ml-5 space-y-1">
-                        <Reorder.Group
-                          axis="y"
-                          values={course.assignments}
-                          onReorder={(newOrder) => reorderAssignments(course.id, newOrder)}
-                          className="space-y-1"
-                        >
-                          {course.assignments.map(assignment => (
-                            <Reorder.Item
-                              key={assignment.id}
-                              value={assignment}
-                              className="flex items-center gap-1 sm:gap-2 p-1.5 sm:p-2 rounded-lg bg-background/30 cursor-grab active:cursor-grabbing"
-                            >
-                              <GripVertical className="w-2.5 h-2.5 text-muted-foreground hidden sm:block" />
-                              <input
-                                type="text"
-                                value={assignment.name}
-                                onChange={(e) => updateAssignment(course.id, assignment.id, { name: e.target.value })}
-                                className="flex-1 bg-transparent text-[10px] sm:text-xs text-foreground focus:outline-none min-w-0"
-                                placeholder="Assignment"
-                              />
-                              <input
-                                type="number"
-                                value={assignment.grade || ''}
-                                onChange={(e) => updateAssignment(course.id, assignment.id, { grade: parseFloat(e.target.value) || 0 })}
-                                min="0"
-                                max="100"
-                                className="w-10 sm:w-12 text-[10px] sm:text-xs text-center px-1 py-0.5 rounded bg-muted border border-border text-foreground"
-                                placeholder="%"
-                              />
-                              <input
-                                type="number"
-                                value={assignment.weight || ''}
-                                onChange={(e) => updateAssignment(course.id, assignment.id, { weight: parseFloat(e.target.value) || 0 })}
-                                min="0"
-                                max="100"
-                                className="w-10 sm:w-12 text-[10px] sm:text-xs text-center px-1 py-0.5 rounded bg-muted border border-border text-foreground"
-                                placeholder="wt"
-                              />
-                              <button
-                                onClick={() => deleteAssignment(course.id, assignment.id)}
-                                className="p-0.5 hover:bg-destructive/10 rounded text-muted-foreground hover:text-destructive"
-                              >
-                                <Trash2 className="w-2.5 h-2.5" />
-                              </button>
-                            </Reorder.Item>
-                          ))}
-                        </Reorder.Group>
+                      <div className="mt-2 ml-2 sm:ml-5">
+                        {/* Input Mode Toggle */}
                         <button
-                          onClick={() => addAssignment(course.id)}
-                          className="flex items-center gap-1 text-[10px] sm:text-xs text-primary hover:text-primary/80 transition-colors ml-1"
+                          onClick={() => updateCourse(course.id, { 
+                            inputMode: course.inputMode === 'assignments' ? 'letterGrade' : 'assignments' 
+                          })}
+                          className="flex items-center gap-1.5 text-[10px] sm:text-xs text-muted-foreground hover:text-foreground mb-2 transition-colors"
                         >
-                          <Plus className="w-3 h-3" />
-                          Add Assignment
+                          {course.inputMode === 'assignments' ? (
+                            <ToggleLeft className="w-3.5 h-3.5" />
+                          ) : (
+                            <ToggleRight className="w-3.5 h-3.5 text-primary" />
+                          )}
+                          <span>{course.inputMode === 'assignments' ? 'Assignments' : 'Letter Grade'}</span>
                         </button>
+
+                        {course.inputMode === 'letterGrade' ? (
+                          /* Manual Letter Grade Input */
+                          <div className="flex items-center gap-2 p-2 rounded-lg bg-background/30">
+                            <span className="text-[10px] sm:text-xs text-muted-foreground">Grade:</span>
+                            <input
+                              type="number"
+                              value={course.manualGrade ?? ''}
+                              onChange={(e) => updateCourse(course.id, { 
+                                manualGrade: e.target.value === '' ? undefined : parseFloat(e.target.value) 
+                              })}
+                              min="0"
+                              max="100"
+                              className="w-14 sm:w-16 text-[10px] sm:text-xs text-center px-1 py-0.5 rounded bg-muted border border-border text-foreground"
+                              placeholder="%"
+                            />
+                            <span className="text-[10px] sm:text-xs text-muted-foreground">%</span>
+                          </div>
+                        ) : (
+                          /* Assignments List */
+                          <div className="space-y-1">
+                            <Reorder.Group
+                              axis="y"
+                              values={course.assignments}
+                              onReorder={(newOrder) => reorderAssignments(course.id, newOrder)}
+                              className="space-y-1"
+                            >
+                              {course.assignments.map(assignment => (
+                                <Reorder.Item
+                                  key={assignment.id}
+                                  value={assignment}
+                                  className="flex items-center gap-1 sm:gap-2 p-1.5 sm:p-2 rounded-lg bg-background/30 cursor-grab active:cursor-grabbing"
+                                >
+                                  <GripVertical className="w-2.5 h-2.5 text-muted-foreground hidden sm:block" />
+                                  <input
+                                    type="text"
+                                    value={assignment.name}
+                                    onChange={(e) => updateAssignment(course.id, assignment.id, { name: e.target.value })}
+                                    className="flex-1 bg-transparent text-[10px] sm:text-xs text-foreground focus:outline-none min-w-0"
+                                    placeholder="Assignment"
+                                  />
+                                  <input
+                                    type="number"
+                                    value={assignment.grade || ''}
+                                    onChange={(e) => updateAssignment(course.id, assignment.id, { grade: parseFloat(e.target.value) || 0 })}
+                                    min="0"
+                                    max="100"
+                                    className="w-10 sm:w-12 text-[10px] sm:text-xs text-center px-1 py-0.5 rounded bg-muted border border-border text-foreground"
+                                    placeholder="%"
+                                  />
+                                  <input
+                                    type="number"
+                                    value={assignment.weight || ''}
+                                    onChange={(e) => updateAssignment(course.id, assignment.id, { weight: parseFloat(e.target.value) || 0 })}
+                                    min="0"
+                                    max="100"
+                                    className="w-10 sm:w-12 text-[10px] sm:text-xs text-center px-1 py-0.5 rounded bg-muted border border-border text-foreground"
+                                    placeholder="wt"
+                                  />
+                                  <button
+                                    onClick={() => deleteAssignment(course.id, assignment.id)}
+                                    className="p-0.5 hover:bg-destructive/10 rounded text-muted-foreground hover:text-destructive"
+                                  >
+                                    <Trash2 className="w-2.5 h-2.5" />
+                                  </button>
+                                </Reorder.Item>
+                              ))}
+                            </Reorder.Group>
+                            <button
+                              onClick={() => addAssignment(course.id)}
+                              className="flex items-center gap-1 text-[10px] sm:text-xs text-primary hover:text-primary/80 transition-colors ml-1"
+                            >
+                              <Plus className="w-3 h-3" />
+                              Add Assignment
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </motion.div>
                   )}
