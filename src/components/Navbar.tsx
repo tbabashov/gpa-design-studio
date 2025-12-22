@@ -96,50 +96,51 @@ const Navbar = ({ onNavigate }: NavbarProps) => {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.5 }}
-              className="hidden md:flex items-center gap-2"
+              className="hidden md:flex items-center gap-3"
             >
-              <ThemeToggle />
-              {user ? (
-                <DropdownMenu modal={false}>
-                  <DropdownMenuTrigger asChild>
-                    <Button 
-                      variant="ghost" 
-                      size="icon"
-                      className="rounded-full h-10 w-10"
-                    >
-                      <User className="w-[22px] h-[22px]" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-48">
-                    <DropdownMenuItem onClick={() => navigate('/dashboard')}>
-                      <LayoutDashboard className="w-4 h-4 mr-2" />
-                      Dashboard
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => navigate('/profile')}>
-                      <Settings className="w-4 h-4 mr-2" />
-                      Profile Settings
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem 
-                      onClick={() => signOut()}
-                      className="text-red-500 focus:text-red-500 focus:bg-red-500/10"
-                    >
-                      <LogOut className="w-4 h-4 mr-2" />
-                      Sign Out
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              ) : (
-                <Button 
-                  variant="ghost" 
-                  size="default"
-                  onClick={() => navigate('/auth')}
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  <User className="w-4 h-4 mr-2" />
-                  Sign In
-                </Button>
-              )}
+              <div className="flex items-center gap-1 mr-1">
+                <ThemeToggle />
+                {user ? (
+                  <DropdownMenu modal={false}>
+                    <DropdownMenuTrigger asChild>
+                      <Button 
+                        variant="ghost" 
+                        size="icon"
+                        className="rounded-full h-10 w-10"
+                      >
+                        <User className="w-[22px] h-[22px]" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-48">
+                      <DropdownMenuItem onClick={() => navigate('/dashboard')}>
+                        <LayoutDashboard className="w-4 h-4 mr-2" />
+                        Dashboard
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate('/profile')}>
+                        <Settings className="w-4 h-4 mr-2" />
+                        Profile Settings
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem 
+                        onClick={() => signOut()}
+                        className="text-red-500 focus:text-red-500 focus:bg-red-500/10"
+                      >
+                        <LogOut className="w-4 h-4 mr-2" />
+                        Sign Out
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                ) : (
+                  <Button 
+                    variant="ghost" 
+                    size="icon"
+                    onClick={() => navigate('/auth')}
+                    className="rounded-full h-10 w-10"
+                  >
+                    <User className="w-[22px] h-[22px]" />
+                  </Button>
+                )}
+              </div>
               <Button 
                 variant="default" 
                 size="default"
