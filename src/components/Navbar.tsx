@@ -63,30 +63,32 @@ const Navbar = ({ onNavigate }: NavbarProps) => {
       >
         <div className="container mx-auto px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-20">
-            {/* Logo */}
-            <EasyGPALogo 
-              size="md" 
-              onClick={() => handleNavClick('home')} 
-            />
+            {/* Logo and Navigation */}
+            <div className="flex items-center gap-6">
+              <EasyGPALogo 
+                size="md" 
+                onClick={() => handleNavClick('home')} 
+              />
 
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center gap-2">
-              {navItems.map((item, index) => (
-                <motion.div
-                  key={item.section}
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 + 0.3 }}
-                >
-                  <Button
-                    variant="nav"
-                    onClick={() => handleNavClick(item.section)}
-                    className="px-4"
+              {/* Desktop Navigation */}
+              <div className="hidden md:flex items-center gap-2">
+                {navItems.map((item, index) => (
+                  <motion.div
+                    key={item.section}
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 + 0.3 }}
                   >
-                    {item.label}
-                  </Button>
-                </motion.div>
-              ))}
+                    <Button
+                      variant="nav"
+                      onClick={() => handleNavClick(item.section)}
+                      className="px-4"
+                    >
+                      {item.label}
+                    </Button>
+                  </motion.div>
+                ))}
+              </div>
             </div>
 
             {/* CTA Buttons */}
