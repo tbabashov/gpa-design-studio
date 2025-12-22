@@ -3,17 +3,17 @@ import { motion } from 'framer-motion';
 import { Star } from 'lucide-react';
 
 const reviews = [
-  { name: 'Alyssa R.', university: 'Stanford University', rating: 5, text: "This GPA calculator is amazing! Saved me so much time and stress during finals.", avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Stanford_Cardinal_logo.svg/200px-Stanford_Cardinal_logo.svg.png' },
-  { name: 'James K.', university: 'MIT', rating: 4, text: "I can track my grades perfectly now. The interface is clean and intuitive.", avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/MIT_logo.svg/200px-MIT_logo.svg.png' },
-  { name: 'Maria L.', university: 'UCLA', rating: 5, text: "The interface is beautiful and responsive. Best GPA tool I've ever used!", avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/UCLA_Bruins_script.svg/200px-UCLA_Bruins_script.svg.png' },
-  { name: 'Daniel S.', university: 'Harvard University', rating: 5, text: "Adding courses and assignments is super easy. Love the drag and drop!", avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=face', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Harvard_University_coat_of_arms.svg/200px-Harvard_University_coat_of_arms.svg.png' },
-  { name: 'Sophia M.', university: 'UC Berkeley', rating: 5, text: "Helped me calculate my GPA accurately every semester. Highly recommend!", avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=face', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Seal_of_University_of_California%2C_Berkeley.svg/200px-Seal_of_University_of_California%2C_Berkeley.svg.png' },
-  { name: 'Alex T.', university: 'Yale University', rating: 5, text: "Finally a calculator that works exactly how I need it. Perfect for students!", avatar: 'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=100&h=100&fit=crop&crop=face', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Yale_University_Shield_1.svg/200px-Yale_University_Shield_1.svg.png' },
-  { name: 'Emily W.', university: 'Princeton', rating: 4, text: "Great app! The workspace feature lets me track multiple semesters easily.", avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&h=100&fit=crop&crop=face', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Princeton_seal.svg/200px-Princeton_seal.svg.png' },
-  { name: 'Ryan P.', university: 'Columbia University', rating: 5, text: "Clean design, fast calculations, and saves my progress. What more could I ask?", avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&h=100&fit=crop&crop=face', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Columbia_University_shield.svg/200px-Columbia_University_shield.svg.png' },
-  { name: 'Jordan H.', university: 'Duke University', rating: 5, text: "The what-if calculator helped me plan my semester perfectly. Game changer!", avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Duke_Blue_Devils_logo.svg/200px-Duke_Blue_Devils_logo.svg.png' },
-  { name: 'Mia C.', university: 'Northwestern University', rating: 5, text: "So much better than spreadsheets. I use it every week to track my progress.", avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop&crop=face', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Northwestern_Wildcats_logo.svg/200px-Northwestern_Wildcats_logo.svg.png' },
-  { name: 'Ethan B.', university: 'University of Michigan', rating: 4, text: "Love how I can export my GPA reports. Makes academic planning so much easier.", avatar: 'https://images.unsplash.com/photo-1463453091185-61582044d556?w=100&h=100&fit=crop&crop=face', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Seal_of_the_University_of_Michigan.svg/200px-Seal_of_the_University_of_Michigan.svg.png' },
+  { name: 'Alyssa R.', university: 'Stanford University', rating: 5, text: "This GPA calculator is amazing! Saved me so much time and stress during finals.", avatar: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=100&h=100&fit=crop&crop=face' },
+  { name: 'James K.', university: 'MIT', rating: 4, text: "I can track my grades perfectly now. The interface is clean and intuitive.", avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&h=100&fit=crop&crop=face' },
+  { name: 'Maria L.', university: 'UCLA', rating: 5, text: "The interface is beautiful and responsive. Best GPA tool I've ever used!", avatar: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=100&h=100&fit=crop&crop=face' },
+  { name: 'Daniel S.', university: 'Harvard University', rating: 5, text: "Adding courses and assignments is super easy. Love the drag and drop!", avatar: 'https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?w=100&h=100&fit=crop&crop=face' },
+  { name: 'Sophia M.', university: 'UC Berkeley', rating: 5, text: "Helped me calculate my GPA accurately every semester. Highly recommend!", avatar: 'https://images.unsplash.com/photo-1488716820095-cbe80883c496?w=100&h=100&fit=crop&crop=face' },
+  { name: 'Alex T.', university: 'Yale University', rating: 5, text: "Finally a calculator that works exactly how I need it. Perfect for students!", avatar: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=100&h=100&fit=crop&crop=face' },
+  { name: 'Emily W.', university: 'Princeton', rating: 4, text: "Great app! The workspace feature lets me track multiple semesters easily.", avatar: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=100&h=100&fit=crop&crop=face' },
+  { name: 'Ryan P.', university: 'Columbia University', rating: 5, text: "Clean design, fast calculations, and saves my progress. What more could I ask?", avatar: 'https://images.unsplash.com/photo-1507081323647-4d250478b919?w=100&h=100&fit=crop&crop=face' },
+  { name: 'Jordan H.', university: 'Duke University', rating: 5, text: "The what-if calculator helped me plan my semester perfectly. Game changer!", avatar: 'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=100&h=100&fit=crop&crop=face' },
+  { name: 'Mia C.', university: 'Northwestern University', rating: 5, text: "So much better than spreadsheets. I use it every week to track my progress.", avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=face' },
+  { name: 'Ethan B.', university: 'University of Michigan', rating: 4, text: "Love how I can export my GPA reports. Makes academic planning so much easier.", avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=100&h=100&fit=crop&crop=face' },
 ];
 
 const ReviewCard = ({ review }: { review: typeof reviews[0] }) => (
@@ -39,14 +39,7 @@ const ReviewCard = ({ review }: { review: typeof reviews[0] }) => (
       />
       <div className="flex-1 min-w-0">
         <p className="font-semibold text-foreground">{review.name}</p>
-        <div className="flex items-center gap-2">
-          <img 
-            src={review.logo} 
-            alt={review.university}
-            className="w-4 h-4 object-contain opacity-70"
-          />
-          <p className="text-sm text-muted-foreground/70 truncate">{review.university}</p>
-        </div>
+        <p className="text-sm text-muted-foreground/70 truncate">{review.university}</p>
       </div>
     </div>
   </div>
