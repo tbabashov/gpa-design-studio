@@ -38,6 +38,7 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
     getTotalCredits,
     createProfile,
     deleteProfile,
+    restoreProfile,
     setActiveProfile,
     resetProfile,
     addCourse,
@@ -128,8 +129,18 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
 
   const handleDeleteProfile = (id: string) => {
     if (!confirm('Delete this workspace?')) return;
-    deleteProfile(id);
-    toast.success('Workspace deleted');
+    const deletedProfile = deleteProfile(id);
+    if (deletedProfile) {
+      toast.success('Workspace deleted', {
+        action: {
+          label: 'Undo',
+          onClick: () => {
+            restoreProfile(deletedProfile);
+            toast.success('Workspace restored');
+          },
+        },
+      });
+    }
   };
 
   const handleResetProfile = () => {

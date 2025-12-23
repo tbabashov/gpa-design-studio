@@ -335,10 +335,23 @@ export const useCalculatorState = () => {
     }));
   }, [setState]);
 
-  const deleteProfile = useCallback((id: string) => {
+  const deleteProfile = useCallback((id: string): Profile | null => {
+    let deletedProfile: Profile | null = null;
+    setState(prev => {
+      deletedProfile = prev.profiles.find(p => p.id === id) || null;
+      return {
+        profiles: prev.profiles.filter(p => p.id !== id),
+        activeProfileId: prev.activeProfileId === id ? null : prev.activeProfileId,
+      };
+    });
+    return deletedProfile;
+  }, [setState]);
+
+  const restoreProfile = useCallback((profile: Profile) => {
     setState(prev => ({
-      profiles: prev.profiles.filter(p => p.id !== id),
-      activeProfileId: prev.activeProfileId === id ? null : prev.activeProfileId,
+      ...prev,
+      profiles: [...prev.profiles, profile],
+      activeProfileId: profile.id,
     }));
   }, [setState]);
 
@@ -511,6 +524,7 @@ export const useCalculatorState = () => {
     getTotalCredits,
     createProfile,
     deleteProfile,
+    restoreProfile,
     setActiveProfile,
     resetProfile,
     addCourse,
