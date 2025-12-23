@@ -335,26 +335,33 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                             {/* Letter Grade Box */}
                             <div className="flex items-center gap-2">
                               {(course.inputMode || 'assignments') === 'letterGrade' ? (
-                                <input
-                                  type="text"
-                                  value={course.manualGrade !== undefined ? toLetterGrade(course.manualGrade) : ''}
-                                  onChange={(e) => {
-                                    const val = e.target.value.toUpperCase();
-                                    const fromLetter = letterGradeToPercentage(val);
-                                    if (fromLetter !== undefined) {
-                                      updateCourse(course.id, { manualGrade: fromLetter });
-                                    } else {
-                                      const num = parseFloat(val);
-                                      if (!isNaN(num) && num >= 0 && num <= 100) {
-                                        updateCourse(course.id, { manualGrade: num });
-                                      } else if (val === '') {
-                                        updateCourse(course.id, { manualGrade: undefined });
+                                <div className="flex items-center">
+                                  <input
+                                    type="text"
+                                    value={course.manualGrade ?? ''}
+                                    onChange={(e) => {
+                                      const val = e.target.value;
+                                      // First check if it's a letter grade
+                                      const fromLetter = letterGradeToPercentage(val.toUpperCase());
+                                      if (fromLetter !== undefined) {
+                                        updateCourse(course.id, { manualGrade: fromLetter });
+                                      } else {
+                                        // Parse as number
+                                        const num = parseFloat(val);
+                                        if (!isNaN(num) && num >= 0 && num <= 100) {
+                                          updateCourse(course.id, { manualGrade: num });
+                                        } else if (val === '') {
+                                          updateCourse(course.id, { manualGrade: undefined });
+                                        }
                                       }
-                                    }
-                                  }}
-                                  className="w-12 sm:w-14 text-sm sm:text-base text-center font-bold px-2 py-1 rounded-lg bg-primary/20 border-2 border-primary/40 text-primary"
-                                  placeholder="-"
-                                />
+                                    }}
+                                    className="w-14 sm:w-16 text-sm sm:text-base text-center px-2 py-1 rounded-l-lg bg-muted/50 border border-border/50 text-foreground"
+                                    placeholder="%"
+                                  />
+                                  <div className="w-10 sm:w-12 text-sm sm:text-base text-center font-bold px-2 py-1 rounded-r-lg bg-primary/20 border-2 border-primary/40 text-primary border-l-0">
+                                    {course.manualGrade !== undefined ? toLetterGrade(course.manualGrade) : '-'}
+                                  </div>
+                                </div>
                               ) : (
                                 <div className="w-12 sm:w-14 text-sm sm:text-base text-center font-bold px-2 py-1 rounded-lg bg-primary/20 border-2 border-primary/40 text-primary">
                                   {percentage > 0 ? toLetterGrade(percentage) : '-'}
