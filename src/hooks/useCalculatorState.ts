@@ -336,16 +336,14 @@ export const useCalculatorState = () => {
   }, [setState]);
 
   const deleteProfile = useCallback((id: string): Profile | null => {
-    let deletedProfile: Profile | null = null;
-    setState(prev => {
-      deletedProfile = prev.profiles.find(p => p.id === id) || null;
-      return {
-        profiles: prev.profiles.filter(p => p.id !== id),
-        activeProfileId: prev.activeProfileId === id ? null : prev.activeProfileId,
-      };
-    });
+    // Find the profile BEFORE setState runs (state is synchronously available)
+    const deletedProfile = state.profiles.find(p => p.id === id) || null;
+    setState(prev => ({
+      profiles: prev.profiles.filter(p => p.id !== id),
+      activeProfileId: prev.activeProfileId === id ? null : prev.activeProfileId,
+    }));
     return deletedProfile;
-  }, [setState]);
+  }, [setState, state.profiles]);
 
   const restoreProfile = useCallback((profile: Profile) => {
     setState(prev => ({
