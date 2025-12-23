@@ -371,10 +371,10 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                                 onClick={() => updateCourse(course.id, { 
                                   inputMode: (course.inputMode || 'assignments') === 'assignments' ? 'letterGrade' : 'assignments' 
                                 })}
-                                className={`flex items-center gap-1.5 px-2 py-1 rounded-lg transition-colors text-xs sm:text-sm ${
+                                className={`flex items-center gap-1.5 px-2 py-1 rounded-lg transition-all duration-200 hover:scale-105 text-xs sm:text-sm ${
                                   (course.inputMode || 'assignments') === 'assignments' 
-                                    ? 'bg-primary/20 text-primary border border-primary/30' 
-                                    : 'bg-muted/50 text-muted-foreground hover:text-foreground border border-border/30'
+                                    ? 'bg-primary/20 text-primary border border-primary/30 hover:bg-primary/30' 
+                                    : 'bg-muted/50 text-muted-foreground hover:text-foreground border border-border/30 hover:bg-muted'
                                 }`}
                                 title={(course.inputMode || 'assignments') === 'assignments' ? 'Using assignments' : 'Click to use assignments'}
                               >
