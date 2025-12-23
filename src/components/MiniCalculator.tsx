@@ -54,7 +54,7 @@ const MiniCalculator = () => {
 
   return (
     <motion.div 
-      className="glass-card rounded-2xl p-4 sm:p-5 shadow-xl max-h-[420px] sm:max-h-[500px] overflow-y-auto w-full"
+      className="glass-card rounded-2xl p-3 sm:p-5 shadow-xl max-h-[420px] sm:max-h-[500px] overflow-y-auto overflow-x-hidden w-full"
       whileHover={{ y: -3 }}
       transition={{ type: "spring", stiffness: 300 }}
     >
@@ -101,7 +101,7 @@ const MiniCalculator = () => {
             >
               <div className="p-2 sm:p-3">
                 {/* Course Header */}
-                <div className="flex items-center gap-1 sm:gap-2">
+                <div className="flex items-center gap-1 sm:gap-2 flex-wrap sm:flex-nowrap">
                   <GripVertical className="w-3 h-3 text-muted-foreground flex-shrink-0" />
                   <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
                     <BookOpen className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-primary" />
@@ -110,8 +110,8 @@ const MiniCalculator = () => {
                     type="text"
                     value={course.name}
                     onChange={(e) => updateCourse(course.id, { name: e.target.value })}
-                    className="flex-1 bg-transparent text-xs sm:text-sm font-medium text-foreground focus:outline-none min-w-0"
-                    placeholder="Course name"
+                    className="flex-1 bg-transparent text-xs sm:text-sm font-medium text-foreground focus:outline-none min-w-0 max-w-[80px] sm:max-w-none"
+                    placeholder="Course"
                   />
                   {/* Letter Grade Box */}
                   <div className="flex items-center gap-1">
@@ -168,7 +168,7 @@ const MiniCalculator = () => {
                     onChange={(e) => updateCourse(course.id, { credits: parseInt(e.target.value) || 1 })}
                     min="1"
                     max="12"
-                    className="w-10 sm:w-12 text-[10px] sm:text-xs text-center px-1 py-0.5 rounded bg-muted border border-border text-foreground"
+                    className="w-8 sm:w-12 text-[10px] sm:text-xs text-center px-0.5 sm:px-1 py-0.5 rounded bg-muted border border-border text-foreground"
                     title="Credits"
                   />
                   <div className="text-right min-w-[30px] sm:min-w-[40px]">

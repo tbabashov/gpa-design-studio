@@ -9,15 +9,15 @@ interface HeroSectionProps {
 
 const HeroSection = ({ onNavigate }: HeroSectionProps) => {
   return (
-    <section id="home" className="min-h-screen pt-20 sm:pt-24 lg:pt-32 pb-12 sm:pb-16 relative overflow-hidden">
+    <section id="home" className="min-h-screen pt-20 sm:pt-24 lg:pt-32 pb-12 sm:pb-16 relative overflow-hidden px-4 sm:px-0">
       {/* Background effects */}
-      <div className="absolute inset-0 pointer-events-none">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
         <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-secondary/10 rounded-full blur-3xl" />
       </div>
 
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
-        <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-20 items-center">
+      <div className="container mx-auto px-0 sm:px-6 lg:px-8 relative">
+        <div className="flex flex-col lg:grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-20 items-center">
           {/* Left Content */}
           <div className="space-y-8">
             <motion.div
@@ -111,9 +111,9 @@ const HeroSection = ({ onNavigate }: HeroSectionProps) => {
             initial={{ opacity: 0, x: 50, rotateY: -10 }}
             animate={{ opacity: 1, x: 0, rotateY: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="relative w-full max-w-md mx-auto lg:max-w-none"
+            className="relative w-full max-w-full sm:max-w-md lg:max-w-none mx-auto"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-3xl blur-3xl -z-10" />
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-3xl blur-3xl -z-10 overflow-hidden" />
             <MiniCalculator />
           </motion.div>
         </div>
