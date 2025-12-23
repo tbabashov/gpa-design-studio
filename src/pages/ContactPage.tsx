@@ -36,8 +36,8 @@ const ContactPage = ({ onNavigate }: ContactPageProps) => {
       icon: Phone,
       title: 'Call Us',
       description: 'Mon-Fri from 9am to 6pm',
-      value: '+1 (555) 123-4567',
-      href: 'tel:+15551234567',
+      value: '+994 (070) 730 00 06',
+      href: 'tel:+994707300006',
       color: 'secondary',
     },
     {
