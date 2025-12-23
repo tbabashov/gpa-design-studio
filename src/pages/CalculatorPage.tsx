@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence, Reorder } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { 
@@ -22,6 +22,9 @@ import ExportShare from '@/components/ExportShare';
 import { useCalculatorState, Course } from '@/hooks/useCalculatorState';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useIsMobile } from '@/hooks/use-mobile';
+
+const LONG_PRESS_DELAY = 200; // ms
 
 interface CalculatorPageProps {
   onNavigateHome: () => void;
@@ -55,6 +58,25 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
     const saved = localStorage.getItem('easygpa_target');
     return saved ? parseFloat(saved) : null;
   });
+
+  const isMobile = useIsMobile();
+  const [isDragEnabled, setIsDragEnabled] = useState<string | null>(null);
+  const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handlePointerDown = useCallback((id: string) => {
+    if (!isMobile) return;
+    longPressTimerRef.current = setTimeout(() => {
+      setIsDragEnabled(id);
+    }, LONG_PRESS_DELAY);
+  }, [isMobile]);
+
+  const handlePointerUp = useCallback(() => {
+    if (longPressTimerRef.current) {
+      clearTimeout(longPressTimerRef.current);
+      longPressTimerRef.current = null;
+    }
+    setIsDragEnabled(null);
+  }, []);
 
   // Persist target GPA
   useEffect(() => {
@@ -294,6 +316,10 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                       key={course.id}
                       value={course}
                       className="rounded-2xl border border-border/50 overflow-hidden cursor-grab active:cursor-grabbing"
+                      dragListener={!isMobile || isDragEnabled === course.id}
+                      onPointerDown={() => handlePointerDown(course.id)}
+                      onPointerUp={handlePointerUp}
+                      onPointerCancel={handlePointerUp}
                     >
                       <motion.div layout>
                         {/* Course Header */}
@@ -414,6 +440,10 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                                           key={assignment.id}
                                           value={assignment}
                                           className="flex flex-wrap items-center gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl border border-border/30 cursor-grab active:cursor-grabbing bg-background/50"
+                                          dragListener={!isMobile || isDragEnabled === assignment.id}
+                                          onPointerDown={() => handlePointerDown(assignment.id)}
+                                          onPointerUp={handlePointerUp}
+                                          onPointerCancel={handlePointerUp}
                                         >
                                           <GripVertical className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                                           <input
