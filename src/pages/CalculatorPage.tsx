@@ -375,7 +375,7 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                                 </div>
                               ) : (
                                 <div className="w-12 sm:w-14 text-sm sm:text-base text-center font-bold px-2 py-1 rounded-lg bg-primary/20 border-2 border-primary/40 text-primary">
-                                  {percentage > 0 ? toLetterGrade(percentage) : '-'}
+                                  {percentage > 0 ? toLetterGrade(Math.round(percentage)) : '-'}
                                 </div>
                               )}
                               <button

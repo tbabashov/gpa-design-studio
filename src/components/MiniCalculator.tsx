@@ -145,7 +145,7 @@ const MiniCalculator = () => {
                       </div>
                     ) : (
                       <div className="w-8 sm:w-10 text-[10px] sm:text-xs text-center font-semibold px-1 py-0.5 rounded bg-primary/20 border border-primary/30 text-primary">
-                        {percentage > 0 ? toLetterGrade(percentage) : '-'}
+                        {percentage > 0 ? toLetterGrade(Math.round(percentage)) : '-'}
                       </div>
                     )}
                     <button
