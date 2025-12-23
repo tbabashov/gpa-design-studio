@@ -10,8 +10,7 @@ import {
   Save,
   Loader2,
   GripVertical,
-  ToggleLeft,
-  ToggleRight
+  ListChecks
 } from 'lucide-react';
 import { toast } from 'sonner';
 import Navbar from '@/components/Navbar';
@@ -19,7 +18,7 @@ import Footer from '@/components/Footer';
 import GPAGoalTracker from '@/components/GPAGoalTracker';
 import WhatIfCalculator from '@/components/WhatIfCalculator';
 import ExportShare from '@/components/ExportShare';
-import { useCalculatorState, Course } from '@/hooks/useCalculatorState';
+import { useCalculatorState, Course, toLetterGrade, letterGradeToPercentage } from '@/hooks/useCalculatorState';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -331,7 +330,53 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                             >
                               <ChevronDown className={`w-4 h-4 sm:w-5 sm:h-5 transition-transform ${course.isCollapsed ? '-rotate-90' : ''}`} />
                             </button>
-                            <span className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wider">Course Name</span>
+                            <span className="text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wider flex-1">Course Name</span>
+                            
+                            {/* Letter Grade Box */}
+                            <div className="flex items-center gap-2">
+                              {(course.inputMode || 'assignments') === 'letterGrade' ? (
+                                <input
+                                  type="text"
+                                  value={course.manualGrade !== undefined ? toLetterGrade(course.manualGrade) : ''}
+                                  onChange={(e) => {
+                                    const val = e.target.value.toUpperCase();
+                                    const fromLetter = letterGradeToPercentage(val);
+                                    if (fromLetter !== undefined) {
+                                      updateCourse(course.id, { manualGrade: fromLetter });
+                                    } else {
+                                      const num = parseFloat(val);
+                                      if (!isNaN(num) && num >= 0 && num <= 100) {
+                                        updateCourse(course.id, { manualGrade: num });
+                                      } else if (val === '') {
+                                        updateCourse(course.id, { manualGrade: undefined });
+                                      }
+                                    }
+                                  }}
+                                  className="w-12 sm:w-14 text-sm sm:text-base text-center font-bold px-2 py-1 rounded-lg bg-primary/20 border-2 border-primary/40 text-primary"
+                                  placeholder="-"
+                                />
+                              ) : (
+                                <div className="w-12 sm:w-14 text-sm sm:text-base text-center font-bold px-2 py-1 rounded-lg bg-primary/20 border-2 border-primary/40 text-primary">
+                                  {percentage > 0 ? toLetterGrade(percentage) : '-'}
+                                </div>
+                              )}
+                              <button
+                                onClick={() => updateCourse(course.id, { 
+                                  inputMode: (course.inputMode || 'assignments') === 'assignments' ? 'letterGrade' : 'assignments' 
+                                })}
+                                className={`flex items-center gap-1.5 px-2 py-1 rounded-lg transition-colors text-xs sm:text-sm ${
+                                  (course.inputMode || 'assignments') === 'assignments' 
+                                    ? 'bg-primary/20 text-primary border border-primary/30' 
+                                    : 'bg-muted/50 text-muted-foreground hover:text-foreground border border-border/30'
+                                }`}
+                                title={(course.inputMode || 'assignments') === 'assignments' ? 'Using assignments' : 'Click to use assignments'}
+                              >
+                                <ListChecks className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                                <span className="hidden sm:inline">
+                                  {(course.inputMode || 'assignments') === 'assignments' ? 'Assignments' : 'Manual'}
+                                </span>
+                              </button>
+                            </div>
                           </div>
                           <input
                             type="text"
@@ -379,50 +424,7 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                                   </Button>
                                 </div>
 
-                                {/* Input Mode Toggle */}
-                                <div className="mb-4">
-                                  <button
-                                    onClick={() => updateCourse(course.id, { 
-                                      inputMode: (course.inputMode || 'assignments') === 'assignments' ? 'letterGrade' : 'assignments' 
-                                    })}
-                                    className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-lg bg-muted/30 border border-border/30"
-                                  >
-                                    {(course.inputMode || 'assignments') === 'assignments' ? (
-                                      <ToggleLeft className="w-4 h-4" />
-                                    ) : (
-                                      <ToggleRight className="w-4 h-4 text-primary" />
-                                    )}
-                                    <span>
-                                      {(course.inputMode || 'assignments') === 'assignments' 
-                                        ? 'Using Assignments' 
-                                        : 'Using Letter Grade'}
-                                    </span>
-                                  </button>
-                                </div>
-
-                                {(course.inputMode || 'assignments') === 'letterGrade' ? (
-                                  /* Manual Letter Grade Input */
-                                  <div className="mb-4">
-                                    <h3 className="text-[10px] sm:text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-3 sm:mb-4">
-                                      Final Grade
-                                    </h3>
-                                    <div className="flex items-center gap-3 p-4 rounded-xl border border-border/30 bg-background/50">
-                                      <span className="text-sm text-muted-foreground">Enter your grade:</span>
-                                      <input
-                                        type="number"
-                                        value={course.manualGrade ?? ''}
-                                        onChange={(e) => updateCourse(course.id, { 
-                                          manualGrade: e.target.value === '' ? undefined : parseFloat(e.target.value) 
-                                        })}
-                                        min="0"
-                                        max="100"
-                                        className="w-20 sm:w-24 px-3 py-2 rounded-lg bg-muted/50 border border-border/50 text-foreground text-center focus:outline-none focus:border-primary/50 text-sm sm:text-base"
-                                        placeholder="0-100"
-                                      />
-                                      <span className="text-sm text-muted-foreground">%</span>
-                                    </div>
-                                  </div>
-                                ) : (
+                                {(course.inputMode || 'assignments') === 'assignments' ? (
                                   /* Assignments Section */
                                   <div className="mb-4">
                                     <h3 className="text-[10px] sm:text-xs uppercase tracking-wider text-muted-foreground font-semibold mb-3 sm:mb-4">
@@ -495,7 +497,7 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                                       Add Assignment
                                     </button>
                                   </div>
-                                )}
+                                ) : null}
 
                                 {/* Course Summary */}
                                 <div className="pt-3 sm:pt-4 border-t border-border/30 space-y-2">
