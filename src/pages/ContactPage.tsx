@@ -52,7 +52,7 @@ const ContactPage = ({ onNavigate }: ContactPageProps) => {
       icon: MapPin,
       title: 'Location',
       description: 'Where we\'re based',
-      value: 'San Francisco, CA',
+      value: 'Baku, Azerbaijan',
       href: '#',
       color: 'primary',
     },
