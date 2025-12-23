@@ -152,10 +152,10 @@ const MiniCalculator = () => {
                       onClick={() => updateCourse(course.id, { 
                         inputMode: course.inputMode === 'assignments' ? 'letterGrade' : 'assignments' 
                       })}
-                      className={`p-1 rounded transition-colors ${
+                      className={`p-1 rounded transition-all duration-200 hover:scale-110 ${
                         course.inputMode === 'assignments' 
-                          ? 'bg-primary/20 text-primary' 
-                          : 'bg-muted/50 text-muted-foreground hover:text-foreground'
+                          ? 'bg-primary/20 text-primary hover:bg-primary/30' 
+                          : 'bg-muted/50 text-muted-foreground hover:text-foreground hover:bg-muted'
                       }`}
                       title={course.inputMode === 'assignments' ? 'Using assignments' : 'Click to use assignments'}
                     >
