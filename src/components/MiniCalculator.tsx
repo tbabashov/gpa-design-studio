@@ -1,4 +1,4 @@
-import { motion, AnimatePresence, Reorder } from 'framer-motion';
+import { motion, AnimatePresence, Reorder, useDragControls } from 'framer-motion';
 import { 
   BookOpen, 
   GraduationCap, 
@@ -12,6 +12,10 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useCalculatorState, Assignment } from '@/hooks/useCalculatorState';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { useState, useRef, useCallback } from 'react';
+
+const LONG_PRESS_DELAY = 300; // ms
 
 const MiniCalculator = () => {
   const {
@@ -27,6 +31,25 @@ const MiniCalculator = () => {
     reorderAssignments,
     reorderCourses,
   } = useCalculatorState();
+  
+  const isMobile = useIsMobile();
+  const [isDragEnabled, setIsDragEnabled] = useState<string | null>(null);
+  const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handlePointerDown = useCallback((id: string) => {
+    if (!isMobile) return;
+    longPressTimerRef.current = setTimeout(() => {
+      setIsDragEnabled(id);
+    }, LONG_PRESS_DELAY);
+  }, [isMobile]);
+
+  const handlePointerUp = useCallback(() => {
+    if (longPressTimerRef.current) {
+      clearTimeout(longPressTimerRef.current);
+      longPressTimerRef.current = null;
+    }
+    setIsDragEnabled(null);
+  }, []);
 
   const courses = activeProfile?.courses || [];
 
@@ -72,6 +95,10 @@ const MiniCalculator = () => {
               value={course}
               className="rounded-xl bg-muted/30 hover:bg-muted/50 transition-colors cursor-grab active:cursor-grabbing"
               dragTransition={{ bounceStiffness: 600, bounceDamping: 20 }}
+              dragListener={!isMobile || isDragEnabled === course.id}
+              onPointerDown={() => handlePointerDown(course.id)}
+              onPointerUp={handlePointerUp}
+              onPointerCancel={handlePointerUp}
             >
               <div className="p-2 sm:p-3">
                 {/* Course Header */}
@@ -178,6 +205,10 @@ const MiniCalculator = () => {
                                   className="flex items-center gap-1 sm:gap-2 p-1.5 sm:p-2 rounded-lg bg-background/30 cursor-grab active:cursor-grabbing hover:bg-background/50 transition-colors"
                                   dragTransition={{ bounceStiffness: 600, bounceDamping: 20 }}
                                   whileDrag={{ scale: 1.02, boxShadow: "0 5px 15px rgba(0,0,0,0.15)" }}
+                                  dragListener={!isMobile || isDragEnabled === assignment.id}
+                                  onPointerDown={() => handlePointerDown(assignment.id)}
+                                  onPointerUp={handlePointerUp}
+                                  onPointerCancel={handlePointerUp}
                                 >
                                   <GripVertical className="w-2.5 h-2.5 text-muted-foreground hidden sm:block" />
                                   <input
