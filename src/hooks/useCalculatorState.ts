@@ -51,6 +51,38 @@ export const toGPA = (p: number): number => {
   return 0;
 };
 
+export const toLetterGrade = (p: number): string => {
+  if (p >= 94) return 'A';
+  if (p >= 90) return 'A-';
+  if (p >= 87) return 'B+';
+  if (p >= 83) return 'B';
+  if (p >= 80) return 'B-';
+  if (p >= 77) return 'C+';
+  if (p >= 73) return 'C';
+  if (p >= 70) return 'C-';
+  if (p >= 67) return 'D+';
+  if (p >= 60) return 'D';
+  return 'F';
+};
+
+export const letterGradeToPercentage = (letter: string): number | undefined => {
+  const map: Record<string, number> = {
+    'A': 97, 'A+': 97,
+    'A-': 92,
+    'B+': 89,
+    'B': 85,
+    'B-': 82,
+    'C+': 78,
+    'C': 75,
+    'C-': 72,
+    'D+': 68,
+    'D': 65,
+    'D-': 62,
+    'F': 50,
+  };
+  return map[letter.toUpperCase()];
+};
+
 const getInitialState = (): CalculatorState => {
   const saved = localStorage.getItem(STORAGE_KEY);
   if (saved) {
