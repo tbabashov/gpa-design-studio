@@ -28,8 +28,8 @@ const ContactPage = ({ onNavigate }: ContactPageProps) => {
       icon: Mail,
       title: 'Email Us',
       description: 'Send us an email anytime',
-      value: 'hello@easygpa.com',
-      href: 'mailto:hello@easygpa.com',
+      value: 'tbabashov6@outlook.com',
+      href: 'mailto:tbabashov6@outlook.com',
       color: 'primary',
     },
     {
