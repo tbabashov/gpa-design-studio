@@ -1,10 +1,12 @@
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
-import { Mail, Phone, Clock, MapPin, Send, Github, Twitter, Linkedin } from 'lucide-react';
+import { Mail, Phone, Clock, MapPin, Send, Github, Twitter, Linkedin, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 interface ContactPageProps {
   onNavigate: (section: string) => void;
@@ -17,10 +19,33 @@ const ContactPage = ({ onNavigate }: ContactPageProps) => {
     subject: '',
     message: '',
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
+    
+    if (!formData.name || !formData.email || !formData.subject || !formData.message) {
+      toast.error('Please fill in all fields');
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('send-contact-email', {
+        body: formData,
+      });
+
+      if (error) throw error;
+
+      toast.success('Message sent successfully! We\'ll get back to you soon.');
+      setFormData({ name: '', email: '', subject: '', message: '' });
+    } catch (error: any) {
+      console.error('Error sending message:', error);
+      toast.error('Failed to send message. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const contactMethods = [
@@ -190,9 +215,13 @@ const ContactPage = ({ onNavigate }: ContactPageProps) => {
                       placeholder="Tell us more about your question..."
                     />
                   </div>
-                  <Button type="submit" variant="hero" size="lg" className="gap-2">
-                    <Send className="w-4 h-4" />
-                    Send Message
+                  <Button type="submit" variant="hero" size="lg" className="gap-2" disabled={isSubmitting}>
+                    {isSubmitting ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Send className="w-4 h-4" />
+                    )}
+                    {isSubmitting ? 'Sending...' : 'Send Message'}
                   </Button>
                 </form>
               </motion.div>
