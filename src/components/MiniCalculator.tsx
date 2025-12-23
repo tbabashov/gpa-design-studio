@@ -15,7 +15,7 @@ import { useCalculatorState, Assignment } from '@/hooks/useCalculatorState';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useState, useRef, useCallback } from 'react';
 
-const LONG_PRESS_DELAY = 300; // ms
+const LONG_PRESS_DELAY = 200; // ms
 
 const MiniCalculator = () => {
   const {
@@ -103,7 +103,7 @@ const MiniCalculator = () => {
               <div className="p-2 sm:p-3">
                 {/* Course Header */}
                 <div className="flex items-center gap-1 sm:gap-2">
-                  <GripVertical className="w-3 h-3 text-muted-foreground flex-shrink-0 hidden sm:block" />
+                  <GripVertical className="w-3 h-3 text-muted-foreground flex-shrink-0" />
                   <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
                     <BookOpen className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-primary" />
                   </div>
@@ -210,7 +210,7 @@ const MiniCalculator = () => {
                                   onPointerUp={handlePointerUp}
                                   onPointerCancel={handlePointerUp}
                                 >
-                                  <GripVertical className="w-2.5 h-2.5 text-muted-foreground hidden sm:block" />
+                                  <GripVertical className="w-2.5 h-2.5 text-muted-foreground" />
                                   <input
                                     type="text"
                                     value={assignment.name}
