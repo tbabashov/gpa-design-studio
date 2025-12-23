@@ -17,7 +17,7 @@ const Footer = ({ onNavigate }: FooterProps) => {
 
   const contactInfo = [
     { icon: Mail, label: 'hello@easygpa.com', href: 'mailto:hello@easygpa.com' },
-    { icon: Phone, label: '+1 (555) 123-4567', href: 'tel:+15551234567' },
+    { icon: Phone, label: '+994 70 730 00 06', href: 'tel:+994707300006' },
     { icon: Clock, label: 'Mon-Fri: 9AM - 6PM', href: '#' },
   ];
 
