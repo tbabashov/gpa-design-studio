@@ -426,8 +426,8 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                                     <input
                                       type="number"
                                       value={course.credits}
-                                      onChange={(e) => updateCourse(course.id, { credits: parseInt(e.target.value) || 1 })}
-                                      min="1"
+                                      onChange={(e) => updateCourse(course.id, { credits: parseInt(e.target.value) || 0 })}
+                                      min="0"
                                       max="12"
                                       className="w-16 sm:w-20 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg bg-muted/50 border border-border/50 text-foreground text-center focus:outline-none focus:border-primary/50 text-sm sm:text-base"
                                     />

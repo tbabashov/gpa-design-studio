@@ -165,8 +165,8 @@ const MiniCalculator = () => {
                   <input
                     type="number"
                     value={course.credits}
-                    onChange={(e) => updateCourse(course.id, { credits: parseInt(e.target.value) || 1 })}
-                    min="1"
+                    onChange={(e) => updateCourse(course.id, { credits: parseInt(e.target.value) || 0 })}
+                    min="0"
                     max="12"
                     className="w-8 sm:w-12 text-[10px] sm:text-xs text-center px-0.5 sm:px-1 py-0.5 rounded bg-muted border border-border text-foreground"
                     title="Credits"
