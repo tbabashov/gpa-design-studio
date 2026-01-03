@@ -131,7 +131,7 @@ const TermsPage = () => {
                 <p className="text-muted-foreground leading-relaxed">
                   If you have any questions about these Terms of Service, please contact us at:
                 </p>
-                <p className="text-primary mt-2">hello@easygpa.com</p>
+                <p className="text-primary mt-2">tbabashov6@outlook.com</p>
               </section>
             </div>
           </motion.div>
