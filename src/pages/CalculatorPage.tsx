@@ -44,6 +44,7 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
     addCourse,
     updateCourse,
     deleteCourse,
+    restoreCourse,
     addAssignment,
     updateAssignment,
     deleteAssignment,
@@ -151,8 +152,18 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
   };
 
   const handleDeleteCourse = (courseId: string) => {
-    deleteCourse(courseId);
-    toast.success('Course deleted');
+    const deletedCourse = deleteCourse(courseId);
+    if (deletedCourse) {
+      toast.success('Course deleted', {
+        action: {
+          label: 'Undo',
+          onClick: () => {
+            restoreCourse(deletedCourse);
+            toast.success('Course restored');
+          },
+        },
+      });
+    }
   };
 
   const handleNavigate = (section: string) => {
