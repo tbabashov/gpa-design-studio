@@ -409,12 +409,29 @@ export const useCalculatorState = () => {
     }));
   }, [setState]);
 
-  const deleteCourse = useCallback((courseId: string) => {
+  const deleteCourse = useCallback((courseId: string): Course | null => {
+    let deletedCourse: Course | null = null;
+    setState(prev => {
+      const profile = prev.profiles.find(p => p.id === prev.activeProfileId);
+      deletedCourse = profile?.courses.find(c => c.id === courseId) || null;
+      return {
+        ...prev,
+        profiles: prev.profiles.map(p =>
+          p.id === prev.activeProfileId
+            ? { ...p, courses: p.courses.filter(c => c.id !== courseId) }
+            : p
+        ),
+      };
+    });
+    return deletedCourse;
+  }, [setState]);
+
+  const restoreCourse = useCallback((course: Course) => {
     setState(prev => ({
       ...prev,
       profiles: prev.profiles.map(p =>
         p.id === prev.activeProfileId
-          ? { ...p, courses: p.courses.filter(c => c.id !== courseId) }
+          ? { ...p, courses: [...p.courses, course] }
           : p
       ),
     }));
@@ -528,6 +545,7 @@ export const useCalculatorState = () => {
     addCourse,
     updateCourse,
     deleteCourse,
+    restoreCourse,
     addAssignment,
     updateAssignment,
     deleteAssignment,

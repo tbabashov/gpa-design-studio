@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
@@ -11,15 +11,32 @@ import Footer from '@/components/Footer';
 import CalculatorPage from './CalculatorPage';
 import FeaturesPage from './FeaturesPage';
 import ContactPage from './ContactPage';
+import UsernamePickerModal from '@/components/UsernamePickerModal';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
 
 type ActivePage = 'home' | 'calculator' | 'features' | 'contact';
 
 const Index = () => {
   const [activePage, setActivePage] = useState<ActivePage>('home');
+  const { user } = useAuth();
+  const prevUserRef = useRef<string | null>(null);
+  const hasShownWelcomeRef = useRef(false);
   
   const homeRef = useRef<HTMLDivElement>(null);
   const featuresRef = useRef<HTMLDivElement>(null);
   const faqRef = useRef<HTMLDivElement>(null);
+
+  // Show welcome toast when user signs in
+  useEffect(() => {
+    if (user && !prevUserRef.current && !hasShownWelcomeRef.current) {
+      hasShownWelcomeRef.current = true;
+      toast.success('Welcome back!', {
+        description: 'You are now signed in.',
+      });
+    }
+    prevUserRef.current = user?.id || null;
+  }, [user]);
 
   const handleNavigate = useCallback((section: string) => {
     if (section === 'calculator') {
@@ -87,6 +104,8 @@ const Index = () => {
         <meta name="description" content="EasyGPA helps students calculate and track their GPA with precision. Assignment-level accuracy, automatic GPA conversion, and beautiful design." />
         <meta name="keywords" content="GPA calculator, grade calculator, student GPA, academic performance, grade tracking" />
       </Helmet>
+      
+      <UsernamePickerModal />
       
       <div className="min-h-screen">
         <Navbar onNavigate={handleNavigate} />

@@ -35,8 +35,13 @@ const MiniCalculator = () => {
   const [isDragEnabled, setIsDragEnabled] = useState<string | null>(null);
   const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const handlePointerDown = useCallback((id: string) => {
-    if (!isMobile) return;
+  const handleDragHandlePointerDown = useCallback((e: React.PointerEvent, id: string) => {
+    if (!isMobile) {
+      // On desktop, enable drag immediately on handle
+      setIsDragEnabled(id);
+      return;
+    }
+    // On mobile, require long press on handle
     longPressTimerRef.current = setTimeout(() => {
       setIsDragEnabled(id);
     }, LONG_PRESS_DELAY);
@@ -92,17 +97,21 @@ const MiniCalculator = () => {
             <Reorder.Item
               key={course.id}
               value={course}
-              className="rounded-xl bg-muted/30 hover:bg-muted/50 transition-colors cursor-grab active:cursor-grabbing"
+              className="rounded-xl bg-muted/30 hover:bg-muted/50 transition-colors"
               dragTransition={{ bounceStiffness: 600, bounceDamping: 20 }}
-              dragListener={!isMobile || isDragEnabled === course.id}
-              onPointerDown={() => handlePointerDown(course.id)}
-              onPointerUp={handlePointerUp}
-              onPointerCancel={handlePointerUp}
+              dragListener={isDragEnabled === course.id}
             >
               <div className="p-2 sm:p-3">
                 {/* Course Header */}
                 <div className="flex items-center gap-1 sm:gap-2 flex-wrap sm:flex-nowrap">
-                  <GripVertical className="w-3 h-3 text-muted-foreground flex-shrink-0" />
+                  <div
+                    className="cursor-grab active:cursor-grabbing touch-none"
+                    onPointerDown={(e) => handleDragHandlePointerDown(e, course.id)}
+                    onPointerUp={handlePointerUp}
+                    onPointerCancel={handlePointerUp}
+                  >
+                    <GripVertical className="w-3 h-3 text-muted-foreground flex-shrink-0" />
+                  </div>
                   <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
                     <BookOpen className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-primary" />
                   </div>
@@ -216,15 +225,19 @@ const MiniCalculator = () => {
                               <Reorder.Item
                                 key={assignment.id}
                                 value={assignment}
-                                className="flex items-center gap-1 sm:gap-2 p-1.5 sm:p-2 rounded-lg bg-background/30 cursor-grab active:cursor-grabbing hover:bg-background/50 transition-colors"
+                                className="flex items-center gap-1 sm:gap-2 p-1.5 sm:p-2 rounded-lg bg-background/30 hover:bg-background/50 transition-colors"
                                 dragTransition={{ bounceStiffness: 600, bounceDamping: 20 }}
                                 whileDrag={{ scale: 1.02, boxShadow: "0 5px 15px rgba(0,0,0,0.15)" }}
-                                dragListener={!isMobile || isDragEnabled === assignment.id}
-                                onPointerDown={() => handlePointerDown(assignment.id)}
-                                onPointerUp={handlePointerUp}
-                                onPointerCancel={handlePointerUp}
+                                dragListener={isDragEnabled === assignment.id}
                               >
-                                <GripVertical className="w-2.5 h-2.5 text-muted-foreground" />
+                                <div
+                                  className="cursor-grab active:cursor-grabbing touch-none"
+                                  onPointerDown={(e) => handleDragHandlePointerDown(e, assignment.id)}
+                                  onPointerUp={handlePointerUp}
+                                  onPointerCancel={handlePointerUp}
+                                >
+                                  <GripVertical className="w-2.5 h-2.5 text-muted-foreground" />
+                                </div>
                                 <input
                                   type="text"
                                   value={assignment.name}
