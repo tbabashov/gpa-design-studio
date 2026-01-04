@@ -18,6 +18,10 @@ const UsernamePickerModal = () => {
     const checkUsername = async () => {
       if (!user) return;
 
+      // Only check if this is a fresh sign-in
+      const justSignedIn = sessionStorage.getItem('just_signed_in');
+      if (!justSignedIn) return;
+
       try {
         const { data: profile } = await supabase
           .from('profiles')
@@ -30,11 +34,13 @@ const UsernamePickerModal = () => {
           setIsOpen(true);
         } else if (!profile) {
           // Create profile if it doesn't exist, then show picker
-          await supabase.from('profiles').insert({
+          const { error } = await supabase.from('profiles').insert({
             user_id: user.id,
             display_name: null,
           });
-          setIsOpen(true);
+          if (!error) {
+            setIsOpen(true);
+          }
         }
       } catch (error) {
         console.error('Error checking username:', error);

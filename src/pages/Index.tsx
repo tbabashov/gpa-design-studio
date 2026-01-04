@@ -20,22 +20,25 @@ type ActivePage = 'home' | 'calculator' | 'features' | 'contact';
 const Index = () => {
   const [activePage, setActivePage] = useState<ActivePage>('home');
   const { user } = useAuth();
-  const prevUserRef = useRef<string | null>(null);
-  const hasShownWelcomeRef = useRef(false);
   
   const homeRef = useRef<HTMLDivElement>(null);
   const featuresRef = useRef<HTMLDivElement>(null);
   const faqRef = useRef<HTMLDivElement>(null);
 
-  // Show welcome toast when user signs in
+  // Show welcome toast only on fresh sign-in (not page reload)
   useEffect(() => {
-    if (user && !prevUserRef.current && !hasShownWelcomeRef.current) {
-      hasShownWelcomeRef.current = true;
-      toast.success('Welcome back!', {
-        description: 'You are now signed in.',
-      });
-    }
-    prevUserRef.current = user?.id || null;
+    const handleAuthChange = () => {
+      // Check if this is a fresh sign-in (flag set by auth page)
+      const justSignedIn = sessionStorage.getItem('just_signed_in');
+      if (justSignedIn && user) {
+        sessionStorage.removeItem('just_signed_in');
+        toast.success('Welcome back!', {
+          description: 'You are now signed in.',
+        });
+      }
+    };
+    
+    handleAuthChange();
   }, [user]);
 
   const handleNavigate = useCallback((section: string) => {

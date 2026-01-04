@@ -69,7 +69,7 @@ const AuthPage = () => {
             toast.error(error.message);
           }
         } else {
-          toast.success('Welcome back!');
+          sessionStorage.setItem('just_signed_in', 'true');
         }
       } else {
         const { error } = await signUp(email, password);
@@ -80,6 +80,7 @@ const AuthPage = () => {
             toast.error(error.message);
           }
         } else {
+          sessionStorage.setItem('just_signed_in', 'true');
           toast.success('Account created successfully!');
         }
       }
@@ -92,8 +93,10 @@ const AuthPage = () => {
 
   const handleGoogleLogin = async () => {
     setIsLoading(true);
+    sessionStorage.setItem('just_signed_in', 'true');
     const { error } = await signInWithGoogle();
     if (error) {
+      sessionStorage.removeItem('just_signed_in');
       toast.error(error.message);
       setIsLoading(false);
     }
@@ -101,8 +104,10 @@ const AuthPage = () => {
 
   const handleMicrosoftLogin = async () => {
     setIsLoading(true);
+    sessionStorage.setItem('just_signed_in', 'true');
     const { error } = await signInWithMicrosoft();
     if (error) {
+      sessionStorage.removeItem('just_signed_in');
       toast.error(error.message);
       setIsLoading(false);
     }
