@@ -41,13 +41,6 @@ const MiniCalculator = () => {
       e.preventDefault();
       e.stopPropagation();
 
-      // Keep receiving pointer up/cancel even if the finger moves slightly
-      try {
-        (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
-      } catch {
-        // no-op
-      }
-
       if (!isMobile) {
         // On desktop, enable drag immediately on handle
         setIsDragEnabled(id);
@@ -63,10 +56,15 @@ const MiniCalculator = () => {
   );
 
   const handlePointerUp = useCallback(() => {
+    // Only clear the long-press timer, don't disable drag yet
+    // (drag end is handled by framer-motion internally)
     if (longPressTimerRef.current) {
       clearTimeout(longPressTimerRef.current);
       longPressTimerRef.current = null;
     }
+  }, []);
+
+  const handleDragEnd = useCallback(() => {
     setIsDragEnabled(null);
   }, []);
 
@@ -115,6 +113,7 @@ const MiniCalculator = () => {
               className="rounded-xl bg-muted/30 hover:bg-muted/50 transition-colors"
               dragTransition={{ bounceStiffness: 600, bounceDamping: 20 }}
               dragListener={isDragEnabled === course.id}
+              onDragEnd={handleDragEnd}
             >
               <div className="p-2 sm:p-3">
                 {/* Course Header */}
@@ -245,6 +244,7 @@ const MiniCalculator = () => {
                                 dragTransition={{ bounceStiffness: 600, bounceDamping: 20 }}
                                 whileDrag={{ scale: 1.02, boxShadow: "0 5px 15px rgba(0,0,0,0.15)" }}
                                 dragListener={isDragEnabled === assignment.id}
+                                onDragEnd={handleDragEnd}
                               >
                                  <div
                                    className="cursor-grab active:cursor-grabbing touch-none select-none"
