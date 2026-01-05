@@ -64,12 +64,32 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
   const [isDragEnabled, setIsDragEnabled] = useState<string | null>(null);
   const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const handlePointerDown = useCallback((id: string) => {
-    if (!isMobile) return;
-    longPressTimerRef.current = setTimeout(() => {
-      setIsDragEnabled(id);
-    }, LONG_PRESS_DELAY);
-  }, [isMobile]);
+  const handleDragHandlePointerDown = useCallback(
+    (e: React.PointerEvent, id: string) => {
+      // Prevent mobile text selection / callouts when long-pressing the handle
+      e.preventDefault();
+      e.stopPropagation();
+
+      // Keep receiving pointer up/cancel even if the finger moves slightly
+      try {
+        (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
+      } catch {
+        // no-op
+      }
+
+      if (!isMobile) {
+        // On desktop, enable drag immediately on handle
+        setIsDragEnabled(id);
+        return;
+      }
+
+      // On mobile, require long press on handle
+      longPressTimerRef.current = setTimeout(() => {
+        setIsDragEnabled(id);
+      }, LONG_PRESS_DELAY);
+    },
+    [isMobile]
+  );
 
   const handlePointerUp = useCallback(() => {
     if (longPressTimerRef.current) {
@@ -336,16 +356,23 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                     <Reorder.Item
                       key={course.id}
                       value={course}
-                      className="rounded-2xl border border-border/50 overflow-hidden cursor-grab active:cursor-grabbing"
-                      dragListener={!isMobile || isDragEnabled === course.id}
-                      onPointerDown={() => handlePointerDown(course.id)}
-                      onPointerUp={handlePointerUp}
-                      onPointerCancel={handlePointerUp}
+                      className="rounded-2xl border border-border/50 overflow-hidden"
+                      dragListener={isDragEnabled === course.id}
                     >
                       <motion.div layout>
                         {/* Course Header */}
                         <div className="p-3 sm:p-4 border-b border-border/30">
                           <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+                            {/* Drag Handle */}
+                            <div
+                              className="cursor-grab active:cursor-grabbing touch-none select-none"
+                              onPointerDown={(e) => handleDragHandlePointerDown(e, course.id)}
+                              onPointerUp={handlePointerUp}
+                              onPointerCancel={handlePointerUp}
+                              onContextMenu={(e) => e.preventDefault()}
+                            >
+                              <GripVertical className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
+                            </div>
                             <button
                               onClick={() => updateCourse(course.id, { isCollapsed: !course.isCollapsed })}
                               className="text-muted-foreground hover:text-foreground transition-colors"
@@ -470,13 +497,19 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                                         <Reorder.Item
                                           key={assignment.id}
                                           value={assignment}
-                                          className="flex flex-wrap items-center gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl border border-border/30 cursor-grab active:cursor-grabbing bg-background/50"
-                                          dragListener={!isMobile || isDragEnabled === assignment.id}
-                                          onPointerDown={() => handlePointerDown(assignment.id)}
-                                          onPointerUp={handlePointerUp}
-                                          onPointerCancel={handlePointerUp}
+                                          className="flex flex-wrap items-center gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl border border-border/30 bg-background/50"
+                                          dragListener={isDragEnabled === assignment.id}
                                         >
-                                          <GripVertical className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                                          {/* Drag Handle */}
+                                          <div
+                                            className="cursor-grab active:cursor-grabbing touch-none select-none"
+                                            onPointerDown={(e) => handleDragHandlePointerDown(e, assignment.id)}
+                                            onPointerUp={handlePointerUp}
+                                            onPointerCancel={handlePointerUp}
+                                            onContextMenu={(e) => e.preventDefault()}
+                                          >
+                                            <GripVertical className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                                          </div>
                                           <input
                                             type="text"
                                             value={assignment.name}
