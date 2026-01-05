@@ -35,17 +35,32 @@ const MiniCalculator = () => {
   const [isDragEnabled, setIsDragEnabled] = useState<string | null>(null);
   const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const handleDragHandlePointerDown = useCallback((e: React.PointerEvent, id: string) => {
-    if (!isMobile) {
-      // On desktop, enable drag immediately on handle
-      setIsDragEnabled(id);
-      return;
-    }
-    // On mobile, require long press on handle
-    longPressTimerRef.current = setTimeout(() => {
-      setIsDragEnabled(id);
-    }, LONG_PRESS_DELAY);
-  }, [isMobile]);
+  const handleDragHandlePointerDown = useCallback(
+    (e: React.PointerEvent, id: string) => {
+      // Prevent mobile text selection / callouts when long-pressing the handle
+      e.preventDefault();
+      e.stopPropagation();
+
+      // Keep receiving pointer up/cancel even if the finger moves slightly
+      try {
+        (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
+      } catch {
+        // no-op
+      }
+
+      if (!isMobile) {
+        // On desktop, enable drag immediately on handle
+        setIsDragEnabled(id);
+        return;
+      }
+
+      // On mobile, require long press on handle
+      longPressTimerRef.current = setTimeout(() => {
+        setIsDragEnabled(id);
+      }, LONG_PRESS_DELAY);
+    },
+    [isMobile]
+  );
 
   const handlePointerUp = useCallback(() => {
     if (longPressTimerRef.current) {
@@ -105,10 +120,11 @@ const MiniCalculator = () => {
                 {/* Course Header */}
                 <div className="flex items-center gap-1 sm:gap-2 flex-wrap sm:flex-nowrap">
                   <div
-                    className="cursor-grab active:cursor-grabbing touch-none"
+                    className="cursor-grab active:cursor-grabbing touch-none select-none"
                     onPointerDown={(e) => handleDragHandlePointerDown(e, course.id)}
                     onPointerUp={handlePointerUp}
                     onPointerCancel={handlePointerUp}
+                    onContextMenu={(e) => e.preventDefault()}
                   >
                     <GripVertical className="w-3 h-3 text-muted-foreground flex-shrink-0" />
                   </div>
@@ -230,14 +246,15 @@ const MiniCalculator = () => {
                                 whileDrag={{ scale: 1.02, boxShadow: "0 5px 15px rgba(0,0,0,0.15)" }}
                                 dragListener={isDragEnabled === assignment.id}
                               >
-                                <div
-                                  className="cursor-grab active:cursor-grabbing touch-none"
-                                  onPointerDown={(e) => handleDragHandlePointerDown(e, assignment.id)}
-                                  onPointerUp={handlePointerUp}
-                                  onPointerCancel={handlePointerUp}
-                                >
-                                  <GripVertical className="w-2.5 h-2.5 text-muted-foreground" />
-                                </div>
+                                 <div
+                                   className="cursor-grab active:cursor-grabbing touch-none select-none"
+                                   onPointerDown={(e) => handleDragHandlePointerDown(e, assignment.id)}
+                                   onPointerUp={handlePointerUp}
+                                   onPointerCancel={handlePointerUp}
+                                   onContextMenu={(e) => e.preventDefault()}
+                                 >
+                                   <GripVertical className="w-2.5 h-2.5 text-muted-foreground" />
+                                 </div>
                                 <input
                                   type="text"
                                   value={assignment.name}
