@@ -70,13 +70,6 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
       e.preventDefault();
       e.stopPropagation();
 
-      // Keep receiving pointer up/cancel even if the finger moves slightly
-      try {
-        (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
-      } catch {
-        // no-op
-      }
-
       if (!isMobile) {
         // On desktop, enable drag immediately on handle
         setIsDragEnabled(id);
@@ -92,10 +85,15 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
   );
 
   const handlePointerUp = useCallback(() => {
+    // Only clear the long-press timer, don't disable drag yet
+    // (drag end is handled by framer-motion internally)
     if (longPressTimerRef.current) {
       clearTimeout(longPressTimerRef.current);
       longPressTimerRef.current = null;
     }
+  }, []);
+
+  const handleDragEnd = useCallback(() => {
     setIsDragEnabled(null);
   }, []);
 
@@ -358,6 +356,7 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                       value={course}
                       className="rounded-2xl border border-border/50 overflow-hidden"
                       dragListener={isDragEnabled === course.id}
+                      onDragEnd={handleDragEnd}
                     >
                       <motion.div layout>
                         {/* Course Header */}
@@ -499,6 +498,7 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                                           value={assignment}
                                           className="flex flex-wrap items-center gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl border border-border/30 bg-background/50"
                                           dragListener={isDragEnabled === assignment.id}
+                                          onDragEnd={handleDragEnd}
                                         >
                                           {/* Drag Handle */}
                                           <div
