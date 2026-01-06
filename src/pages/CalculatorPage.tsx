@@ -148,11 +148,6 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
     return courses;
   }, [activeProfile, sortBy, sortDirection, calculateCourseGPA]);
 
-  const handleSortChange = (value: string) => {
-    const [option, direction] = value.split('-') as [SortOption, SortDirection];
-    setSortBy(option);
-    setSortDirection(direction);
-  };
 
   // Persist target GPA
   useEffect(() => {
@@ -403,36 +398,35 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                 <div className="flex items-center gap-2">
                   <ArrowUpDown className="w-4 h-4 text-muted-foreground" />
                   <Select
-                    value={`${sortBy}-${sortDirection}`}
-                    onValueChange={handleSortChange}
+                    value={sortBy}
+                    onValueChange={(value) => setSortBy(value as SortOption)}
                   >
-                    <SelectTrigger className="w-[180px] sm:w-[200px] h-9 text-sm">
+                    <SelectTrigger className="w-[140px] sm:w-[160px] h-9 text-sm">
                       <SelectValue placeholder="Sort by..." />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="default-asc">
-                        <span className="flex items-center gap-2">Default Order</span>
-                      </SelectItem>
-                      <SelectItem value="alphabetical-asc">
-                        <span className="flex items-center gap-2"><ArrowUp className="w-3 h-3" /> A → Z</span>
-                      </SelectItem>
-                      <SelectItem value="alphabetical-desc">
-                        <span className="flex items-center gap-2"><ArrowDown className="w-3 h-3" /> Z → A</span>
-                      </SelectItem>
-                      <SelectItem value="grade-desc">
-                        <span className="flex items-center gap-2"><ArrowDown className="w-3 h-3" /> Grade (High → Low)</span>
-                      </SelectItem>
-                      <SelectItem value="grade-asc">
-                        <span className="flex items-center gap-2"><ArrowUp className="w-3 h-3" /> Grade (Low → High)</span>
-                      </SelectItem>
-                      <SelectItem value="credits-desc">
-                        <span className="flex items-center gap-2"><ArrowDown className="w-3 h-3" /> Credits (High → Low)</span>
-                      </SelectItem>
-                      <SelectItem value="credits-asc">
-                        <span className="flex items-center gap-2"><ArrowUp className="w-3 h-3" /> Credits (Low → High)</span>
-                      </SelectItem>
+                      <SelectItem value="default">Default Order</SelectItem>
+                      <SelectItem value="alphabetical">Alphabetical</SelectItem>
+                      <SelectItem value="grade">Grade</SelectItem>
+                      <SelectItem value="credits">Credits</SelectItem>
                     </SelectContent>
                   </Select>
+                  
+                  {/* Sort Direction Toggle - only show when not default */}
+                  {sortBy !== 'default' && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc')}
+                      className="h-9 w-9"
+                    >
+                      {sortDirection === 'asc' ? (
+                        <ArrowUp className="w-4 h-4" />
+                      ) : (
+                        <ArrowDown className="w-4 h-4" />
+                      )}
+                    </Button>
+                  )}
                 </div>
                 
                 {/* Mobile Edit Mode Toggle */}
@@ -483,13 +477,13 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                         {/* Course Header */}
                         <div className="p-3 sm:p-4 border-b border-border/30">
                           <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
-                            {/* Drag Handle - only show when sortBy is default */}
-                            {sortBy === 'default' && (
+                            {/* Drag Handle - only show when sortBy is default and not mobile (use edit mode on mobile) */}
+                            {sortBy === 'default' && (!isMobile || isEditMode) && (
                               <div
                                 className={`cursor-grab active:cursor-grabbing touch-none select-none transition-colors ${
                                   isEditMode ? 'text-primary' : ''
                                 }`}
-                                onPointerDown={(e) => !isEditMode && handleDragHandlePointerDown(e, course.id)}
+                                onPointerDown={(e) => handleDragHandlePointerDown(e, course.id)}
                                 onPointerUp={handlePointerUp}
                                 onPointerCancel={handlePointerUp}
                                 onContextMenu={(e) => e.preventDefault()}
