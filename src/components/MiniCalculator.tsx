@@ -118,15 +118,18 @@ const MiniCalculator = () => {
               <div className="p-2 sm:p-3">
                 {/* Course Header */}
                 <div className="flex items-center gap-1 sm:gap-2 flex-wrap sm:flex-nowrap">
-                  <div
-                    className="cursor-grab active:cursor-grabbing touch-none select-none"
-                    onPointerDown={(e) => handleDragHandlePointerDown(e, course.id)}
-                    onPointerUp={handlePointerUp}
-                    onPointerCancel={handlePointerUp}
-                    onContextMenu={(e) => e.preventDefault()}
-                  >
-                    <GripVertical className="w-3 h-3 text-muted-foreground flex-shrink-0" />
-                  </div>
+                  {/* Drag Handle - only on desktop */}
+                  {!isMobile && (
+                    <div
+                      className="cursor-grab active:cursor-grabbing touch-none select-none"
+                      onPointerDown={(e) => handleDragHandlePointerDown(e, course.id)}
+                      onPointerUp={handlePointerUp}
+                      onPointerCancel={handlePointerUp}
+                      onContextMenu={(e) => e.preventDefault()}
+                    >
+                      <GripVertical className="w-3 h-3 text-muted-foreground flex-shrink-0" />
+                    </div>
+                  )}
                   <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
                     <BookOpen className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-primary" />
                   </div>
