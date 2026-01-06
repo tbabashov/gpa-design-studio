@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence, Reorder } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { 
@@ -10,8 +10,20 @@ import {
   Save,
   Loader2,
   GripVertical,
-  ListChecks
+  ListChecks,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
+  Pencil,
+  Check
 } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from 'sonner';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -63,6 +75,15 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
   const isMobile = useIsMobile();
   const [isDragEnabled, setIsDragEnabled] = useState<string | null>(null);
   const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Sorting state
+  type SortOption = 'default' | 'alphabetical' | 'grade' | 'credits';
+  type SortDirection = 'asc' | 'desc';
+  const [sortBy, setSortBy] = useState<SortOption>('default');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+  
+  // Mobile edit mode for easier dragging
+  const [isEditMode, setIsEditMode] = useState(false);
 
   const handleDragHandlePointerDown = useCallback(
     (e: React.PointerEvent, id: string) => {
@@ -96,6 +117,42 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
   const handleDragEnd = useCallback(() => {
     setIsDragEnabled(null);
   }, []);
+  
+  // Sorted courses
+  const sortedCourses = useMemo(() => {
+    if (!activeProfile) return [];
+    if (sortBy === 'default') return activeProfile.courses;
+    
+    const courses = [...activeProfile.courses];
+    
+    courses.sort((a, b) => {
+      let comparison = 0;
+      
+      switch (sortBy) {
+        case 'alphabetical':
+          comparison = a.name.localeCompare(b.name);
+          break;
+        case 'grade':
+          const gradeA = calculateCourseGPA(a).percentage || 0;
+          const gradeB = calculateCourseGPA(b).percentage || 0;
+          comparison = gradeA - gradeB;
+          break;
+        case 'credits':
+          comparison = a.credits - b.credits;
+          break;
+      }
+      
+      return sortDirection === 'desc' ? -comparison : comparison;
+    });
+    
+    return courses;
+  }, [activeProfile, sortBy, sortDirection, calculateCourseGPA]);
+
+  const handleSortChange = (value: string) => {
+    const [option, direction] = value.split('-') as [SortOption, SortDirection];
+    setSortBy(option);
+    setSortDirection(direction);
+  };
 
   // Persist target GPA
   useEffect(() => {
@@ -341,37 +398,105 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
           {/* Courses */}
           {activeProfile && (
             <div className="space-y-4 sm:space-y-6">
+              {/* Sort Controls & Edit Mode */}
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <ArrowUpDown className="w-4 h-4 text-muted-foreground" />
+                  <Select
+                    value={`${sortBy}-${sortDirection}`}
+                    onValueChange={handleSortChange}
+                  >
+                    <SelectTrigger className="w-[180px] sm:w-[200px] h-9 text-sm">
+                      <SelectValue placeholder="Sort by..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="default-asc">
+                        <span className="flex items-center gap-2">Default Order</span>
+                      </SelectItem>
+                      <SelectItem value="alphabetical-asc">
+                        <span className="flex items-center gap-2"><ArrowUp className="w-3 h-3" /> A → Z</span>
+                      </SelectItem>
+                      <SelectItem value="alphabetical-desc">
+                        <span className="flex items-center gap-2"><ArrowDown className="w-3 h-3" /> Z → A</span>
+                      </SelectItem>
+                      <SelectItem value="grade-desc">
+                        <span className="flex items-center gap-2"><ArrowDown className="w-3 h-3" /> Grade (High → Low)</span>
+                      </SelectItem>
+                      <SelectItem value="grade-asc">
+                        <span className="flex items-center gap-2"><ArrowUp className="w-3 h-3" /> Grade (Low → High)</span>
+                      </SelectItem>
+                      <SelectItem value="credits-desc">
+                        <span className="flex items-center gap-2"><ArrowDown className="w-3 h-3" /> Credits (High → Low)</span>
+                      </SelectItem>
+                      <SelectItem value="credits-asc">
+                        <span className="flex items-center gap-2"><ArrowUp className="w-3 h-3" /> Credits (Low → High)</span>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                {/* Mobile Edit Mode Toggle */}
+                {isMobile && (
+                  <Button
+                    variant={isEditMode ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setIsEditMode(!isEditMode)}
+                    className={`gap-2 ${isEditMode ? 'bg-primary text-primary-foreground' : ''}`}
+                  >
+                    {isEditMode ? (
+                      <>
+                        <Check className="w-4 h-4" />
+                        Done
+                      </>
+                    ) : (
+                      <>
+                        <Pencil className="w-4 h-4" />
+                        Edit
+                      </>
+                    )}
+                  </Button>
+                )}
+              </div>
+
               <Reorder.Group
                 axis="y"
-                values={activeProfile.courses}
-                onReorder={reorderCourses}
+                values={sortBy === 'default' ? activeProfile.courses : sortedCourses}
+                onReorder={sortBy === 'default' ? reorderCourses : () => {}}
                 className="space-y-4 sm:space-y-6"
               >
-                {activeProfile.courses.map(course => {
+                {sortedCourses.map(course => {
                   const { percentage, gpa } = calculateCourseGPA(course);
                   
                   return (
                     <Reorder.Item
                       key={course.id}
                       value={course}
-                      className="rounded-2xl border border-border/50 overflow-hidden"
-                      dragListener={isDragEnabled === course.id}
+                      className={`rounded-2xl border overflow-hidden transition-all ${
+                        isEditMode && isMobile 
+                          ? 'border-primary/50 bg-primary/5' 
+                          : 'border-border/50'
+                      }`}
+                      dragListener={sortBy === 'default' && (isEditMode || isDragEnabled === course.id)}
                       onDragEnd={handleDragEnd}
                     >
                       <motion.div layout>
                         {/* Course Header */}
                         <div className="p-3 sm:p-4 border-b border-border/30">
                           <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
-                            {/* Drag Handle */}
-                            <div
-                              className="cursor-grab active:cursor-grabbing touch-none select-none"
-                              onPointerDown={(e) => handleDragHandlePointerDown(e, course.id)}
-                              onPointerUp={handlePointerUp}
-                              onPointerCancel={handlePointerUp}
-                              onContextMenu={(e) => e.preventDefault()}
-                            >
-                              <GripVertical className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
-                            </div>
+                            {/* Drag Handle - only show when sortBy is default */}
+                            {sortBy === 'default' && (
+                              <div
+                                className={`cursor-grab active:cursor-grabbing touch-none select-none transition-colors ${
+                                  isEditMode ? 'text-primary' : ''
+                                }`}
+                                onPointerDown={(e) => !isEditMode && handleDragHandlePointerDown(e, course.id)}
+                                onPointerUp={handlePointerUp}
+                                onPointerCancel={handlePointerUp}
+                                onContextMenu={(e) => e.preventDefault()}
+                              >
+                                <GripVertical className={`w-4 h-4 sm:w-5 sm:h-5 ${isEditMode ? 'text-primary' : 'text-muted-foreground'}`} />
+                              </div>
+                            )}
                             <button
                               onClick={() => updateCourse(course.id, { isCollapsed: !course.isCollapsed })}
                               className="text-muted-foreground hover:text-foreground transition-colors"
@@ -496,19 +621,25 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                                         <Reorder.Item
                                           key={assignment.id}
                                           value={assignment}
-                                          className="flex flex-wrap items-center gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl border border-border/30 bg-background/50"
-                                          dragListener={isDragEnabled === assignment.id}
+                                          className={`flex flex-wrap items-center gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl border bg-background/50 transition-all ${
+                                            isEditMode && isMobile 
+                                              ? 'border-primary/30' 
+                                              : 'border-border/30'
+                                          }`}
+                                          dragListener={isEditMode || isDragEnabled === assignment.id}
                                           onDragEnd={handleDragEnd}
                                         >
                                           {/* Drag Handle */}
                                           <div
-                                            className="cursor-grab active:cursor-grabbing touch-none select-none"
-                                            onPointerDown={(e) => handleDragHandlePointerDown(e, assignment.id)}
+                                            className={`cursor-grab active:cursor-grabbing touch-none select-none transition-colors ${
+                                              isEditMode ? 'text-primary' : ''
+                                            }`}
+                                            onPointerDown={(e) => !isEditMode && handleDragHandlePointerDown(e, assignment.id)}
                                             onPointerUp={handlePointerUp}
                                             onPointerCancel={handlePointerUp}
                                             onContextMenu={(e) => e.preventDefault()}
                                           >
-                                            <GripVertical className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                                            <GripVertical className={`w-4 h-4 flex-shrink-0 ${isEditMode ? 'text-primary' : 'text-muted-foreground'}`} />
                                           </div>
                                           <input
                                             type="text"
