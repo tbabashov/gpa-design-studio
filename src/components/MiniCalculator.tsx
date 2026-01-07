@@ -111,37 +111,44 @@ const MiniCalculator = () => {
               key={course.id}
               value={course}
               className="rounded-xl bg-muted/30 hover:bg-muted/50 transition-colors"
-              dragTransition={{ bounceStiffness: 600, bounceDamping: 20 }}
+              dragTransition={{ bounceStiffness: 300, bounceDamping: 25 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              whileDrag={{ scale: 1.02, boxShadow: "0 8px 20px rgba(0,0,0,0.2)", zIndex: 10 }}
               dragListener={isDragEnabled === course.id}
               onDragEnd={handleDragEnd}
             >
               <div className="p-2 sm:p-3">
-                {/* Course Header */}
-                <div className="flex items-center gap-1 sm:gap-2 flex-wrap sm:flex-nowrap">
-                  {/* Drag Handle - only on desktop */}
-                  {!isMobile && (
-                    <div
-                      className="cursor-grab active:cursor-grabbing touch-none select-none"
-                      onPointerDown={(e) => handleDragHandlePointerDown(e, course.id)}
-                      onPointerUp={handlePointerUp}
-                      onPointerCancel={handlePointerUp}
-                      onContextMenu={(e) => e.preventDefault()}
-                    >
-                      <GripVertical className="w-3 h-3 text-muted-foreground flex-shrink-0" />
+                {/* Course Header - Mobile: name left, controls right */}
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  {/* Left side: drag handle + book icon + name */}
+                  <div className="flex items-center gap-1 sm:gap-2 flex-1 min-w-0">
+                    {/* Drag Handle - only on desktop */}
+                    {!isMobile && (
+                      <div
+                        className="cursor-grab active:cursor-grabbing touch-none select-none p-1 -m-1 hover:bg-muted/50 rounded"
+                        onPointerDown={(e) => handleDragHandlePointerDown(e, course.id)}
+                        onPointerUp={handlePointerUp}
+                        onPointerCancel={handlePointerUp}
+                        onContextMenu={(e) => e.preventDefault()}
+                      >
+                        <GripVertical className="w-3 h-3 text-muted-foreground flex-shrink-0" />
+                      </div>
+                    )}
+                    <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <BookOpen className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-primary" />
                     </div>
-                  )}
-                  <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <BookOpen className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-primary" />
+                    <input
+                      type="text"
+                      value={course.name}
+                      onChange={(e) => updateCourse(course.id, { name: e.target.value })}
+                      className="flex-1 bg-transparent text-xs sm:text-sm font-medium text-foreground focus:outline-none min-w-0"
+                      placeholder="Course"
+                    />
                   </div>
-                  <input
-                    type="text"
-                    value={course.name}
-                    onChange={(e) => updateCourse(course.id, { name: e.target.value })}
-                    className="flex-1 bg-transparent text-xs sm:text-sm font-medium text-foreground focus:outline-none min-w-0 max-w-[80px] sm:max-w-none"
-                    placeholder="Course"
-                  />
-                  {/* Letter Grade Box */}
-                  <div className="flex items-center gap-1">
+                  
+                  {/* Right side: grade box + mode toggle + credits + % + collapse + delete */}
+                  <div className="flex items-center gap-1 flex-shrink-0">
+                    {/* Letter Grade Box */}
                     {course.inputMode === 'letterGrade' ? (
                       <div className="flex items-center gap-0.5">
                         <input
@@ -149,12 +156,10 @@ const MiniCalculator = () => {
                           value={course.manualGrade ?? ''}
                           onChange={(e) => {
                             const val = e.target.value;
-                            // First check if it's a letter grade
                             const fromLetter = letterGradeToPercentage(val.toUpperCase());
                             if (fromLetter !== undefined) {
                               updateCourse(course.id, { manualGrade: fromLetter });
                             } else {
-                              // Parse as number
                               const num = parseFloat(val);
                               if (!isNaN(num) && num >= 0 && num <= 100) {
                                 updateCourse(course.id, { manualGrade: num });
@@ -188,36 +193,36 @@ const MiniCalculator = () => {
                     >
                       <ListChecks className="w-3 h-3" />
                     </button>
+                    <input
+                      type="number"
+                      value={course.credits}
+                      onChange={(e) => updateCourse(course.id, { credits: parseInt(e.target.value) || 0 })}
+                      min="0"
+                      max="12"
+                      className="w-8 sm:w-12 text-[10px] sm:text-xs text-center px-0.5 sm:px-1 py-0.5 rounded bg-muted border border-border text-foreground"
+                      title="Credits"
+                    />
+                    <div className="text-right min-w-[30px] sm:min-w-[40px]">
+                      <div className="text-[10px] sm:text-xs font-semibold text-foreground">{percentage.toFixed(0)}%</div>
+                      <div className="text-[8px] sm:text-[10px] text-secondary">{gpa.toFixed(2)}</div>
+                    </div>
+                    <button
+                      onClick={() => updateCourse(course.id, { isCollapsed: !course.isCollapsed })}
+                      className="p-0.5 sm:p-1 hover:bg-muted rounded"
+                    >
+                      {course.isCollapsed ? (
+                        <ChevronDown className="w-3 h-3 text-muted-foreground" />
+                      ) : (
+                        <ChevronUp className="w-3 h-3 text-muted-foreground" />
+                      )}
+                    </button>
+                    <button
+                      onClick={() => deleteCourse(course.id)}
+                      className="p-0.5 sm:p-1 hover:bg-destructive/10 rounded text-muted-foreground hover:text-destructive"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </button>
                   </div>
-                  <input
-                    type="number"
-                    value={course.credits}
-                    onChange={(e) => updateCourse(course.id, { credits: parseInt(e.target.value) || 0 })}
-                    min="0"
-                    max="12"
-                    className="w-8 sm:w-12 text-[10px] sm:text-xs text-center px-0.5 sm:px-1 py-0.5 rounded bg-muted border border-border text-foreground"
-                    title="Credits"
-                  />
-                  <div className="text-right min-w-[30px] sm:min-w-[40px]">
-                    <div className="text-[10px] sm:text-xs font-semibold text-foreground">{percentage.toFixed(0)}%</div>
-                    <div className="text-[8px] sm:text-[10px] text-secondary">{gpa.toFixed(2)}</div>
-                  </div>
-                  <button
-                    onClick={() => updateCourse(course.id, { isCollapsed: !course.isCollapsed })}
-                    className="p-0.5 sm:p-1 hover:bg-muted rounded"
-                  >
-                    {course.isCollapsed ? (
-                      <ChevronDown className="w-3 h-3 text-muted-foreground" />
-                    ) : (
-                      <ChevronUp className="w-3 h-3 text-muted-foreground" />
-                    )}
-                  </button>
-                  <button
-                    onClick={() => deleteCourse(course.id)}
-                    className="p-0.5 sm:p-1 hover:bg-destructive/10 rounded text-muted-foreground hover:text-destructive"
-                  >
-                    <Trash2 className="w-3 h-3" />
-                  </button>
                 </div>
 
                 {/* Assignments (only shown when in assignments mode and expanded) */}
@@ -240,17 +245,18 @@ const MiniCalculator = () => {
                             layoutScroll
                           >
                             {course.assignments.map(assignment => (
-                              <Reorder.Item
-                                key={assignment.id}
-                                value={assignment}
-                                className="flex items-center gap-1 sm:gap-2 p-1.5 sm:p-2 rounded-lg bg-background/30 hover:bg-background/50 transition-colors"
-                                dragTransition={{ bounceStiffness: 600, bounceDamping: 20 }}
-                                whileDrag={{ scale: 1.02, boxShadow: "0 5px 15px rgba(0,0,0,0.15)" }}
-                                dragListener={isDragEnabled === assignment.id}
-                                onDragEnd={handleDragEnd}
-                              >
+                                <Reorder.Item
+                                  key={assignment.id}
+                                  value={assignment}
+                                  className="flex items-center gap-1 sm:gap-2 p-1.5 sm:p-2 rounded-lg bg-background/30 hover:bg-background/50 transition-colors"
+                                  dragTransition={{ bounceStiffness: 300, bounceDamping: 25 }}
+                                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                  whileDrag={{ scale: 1.02, boxShadow: "0 5px 15px rgba(0,0,0,0.15)" }}
+                                  dragListener={isDragEnabled === assignment.id}
+                                  onDragEnd={handleDragEnd}
+                                >
                                  <div
-                                   className="cursor-grab active:cursor-grabbing touch-none select-none"
+                                   className="cursor-grab active:cursor-grabbing touch-none select-none p-1 -m-0.5 hover:bg-muted/50 rounded"
                                    onPointerDown={(e) => handleDragHandlePointerDown(e, assignment.id)}
                                    onPointerUp={handlePointerUp}
                                    onPointerCancel={handlePointerUp}
