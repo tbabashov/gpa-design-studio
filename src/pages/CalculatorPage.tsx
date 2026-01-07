@@ -457,6 +457,7 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                 values={sortBy === 'default' ? activeProfile.courses : sortedCourses}
                 onReorder={sortBy === 'default' ? reorderCourses : () => {}}
                 className="space-y-4 sm:space-y-6"
+                layoutScroll
               >
                 {sortedCourses.map(course => {
                   const { percentage, gpa } = calculateCourseGPA(course);
@@ -470,18 +471,21 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                           ? 'border-primary/50 bg-primary/5' 
                           : 'border-border/50'
                       }`}
+                      dragTransition={{ bounceStiffness: 300, bounceDamping: 25 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                      whileDrag={{ scale: 1.02, boxShadow: "0 10px 30px rgba(0,0,0,0.2)", zIndex: 50 }}
                       dragListener={sortBy === 'default' && (isEditMode || isDragEnabled === course.id)}
                       onDragEnd={handleDragEnd}
                     >
-                      <motion.div layout>
+                      <motion.div layout="position">
                         {/* Course Header */}
                         <div className="p-3 sm:p-4 border-b border-border/30">
                           <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
                             {/* Drag Handle - only show when sortBy is default and not mobile (use edit mode on mobile) */}
                             {sortBy === 'default' && (!isMobile || isEditMode) && (
                               <div
-                                className={`cursor-grab active:cursor-grabbing touch-none select-none transition-colors ${
-                                  isEditMode ? 'text-primary' : ''
+                                className={`cursor-grab active:cursor-grabbing touch-none select-none p-1.5 -m-1 rounded hover:bg-muted/50 transition-colors ${
+                                  isEditMode ? 'text-primary bg-primary/10' : ''
                                 }`}
                                 onPointerDown={(e) => handleDragHandlePointerDown(e, course.id)}
                                 onPointerUp={handlePointerUp}
@@ -610,6 +614,7 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                                       values={course.assignments}
                                       onReorder={(newOrder) => reorderAssignments(course.id, newOrder)}
                                       className="space-y-3"
+                                      layoutScroll
                                     >
                                       {course.assignments.map(assignment => (
                                         <Reorder.Item
@@ -620,13 +625,16 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                                               ? 'border-primary/30' 
                                               : 'border-border/30'
                                           }`}
+                                          dragTransition={{ bounceStiffness: 300, bounceDamping: 25 }}
+                                          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                          whileDrag={{ scale: 1.02, boxShadow: "0 8px 20px rgba(0,0,0,0.15)", zIndex: 10 }}
                                           dragListener={isEditMode || isDragEnabled === assignment.id}
                                           onDragEnd={handleDragEnd}
                                         >
                                           {/* Drag Handle */}
                                           <div
-                                            className={`cursor-grab active:cursor-grabbing touch-none select-none transition-colors ${
-                                              isEditMode ? 'text-primary' : ''
+                                            className={`cursor-grab active:cursor-grabbing touch-none select-none p-1.5 -m-1 rounded hover:bg-muted/50 transition-colors ${
+                                              isEditMode ? 'text-primary bg-primary/10' : ''
                                             }`}
                                             onPointerDown={(e) => !isEditMode && handleDragHandlePointerDown(e, assignment.id)}
                                             onPointerUp={handlePointerUp}
