@@ -471,28 +471,33 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                           ? 'border-primary/50 bg-primary/5' 
                           : 'border-border/50'
                       }`}
-                      dragTransition={{ bounceStiffness: 300, bounceDamping: 25 }}
-                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                      whileDrag={{ scale: 1.02, boxShadow: "0 10px 30px rgba(0,0,0,0.2)", zIndex: 50 }}
+                      dragElastic={0.08}
+                      dragMomentum={false}
+                      dragTransition={{ bounceStiffness: 650, bounceDamping: 55 }}
+                      transition={{ layout: { type: "spring", stiffness: 650, damping: 55 } }}
+                      whileDrag={{ scale: 1.01, boxShadow: 'var(--shadow-elevated)', zIndex: 50 }}
                       dragListener={sortBy === 'default' && (isEditMode || isDragEnabled === course.id)}
                       onDragEnd={handleDragEnd}
                     >
-                      <motion.div layout="position">
+                      <div>
                         {/* Course Header */}
                         <div className="p-3 sm:p-4 border-b border-border/30">
                           <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
                             {/* Drag Handle - only show when sortBy is default and not mobile (use edit mode on mobile) */}
                             {sortBy === 'default' && (!isMobile || isEditMode) && (
                               <div
-                                className={`cursor-grab active:cursor-grabbing touch-none select-none p-1.5 -m-1 rounded hover:bg-muted/50 transition-colors ${
-                                  isEditMode ? 'text-primary bg-primary/10' : ''
-                                }`}
+                                className={`drag-handle ${isEditMode ? 'text-primary' : ''}`}
                                 onPointerDown={(e) => handleDragHandlePointerDown(e, course.id)}
                                 onPointerUp={handlePointerUp}
                                 onPointerCancel={handlePointerUp}
                                 onContextMenu={(e) => e.preventDefault()}
+                                aria-label="Drag to reorder course"
                               >
-                                <GripVertical className={`w-4 h-4 sm:w-5 sm:h-5 ${isEditMode ? 'text-primary' : 'text-muted-foreground'}`} />
+                                <GripVertical
+                                  className={`drag-handle-icon w-4 h-4 sm:w-5 sm:h-5 ${
+                                    isEditMode ? 'text-primary' : 'text-muted-foreground'
+                                  }`}
+                                />
                               </div>
                             )}
                             <button
@@ -625,23 +630,28 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                                               ? 'border-primary/30' 
                                               : 'border-border/30'
                                           }`}
-                                          dragTransition={{ bounceStiffness: 300, bounceDamping: 25 }}
-                                          transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                                          whileDrag={{ scale: 1.02, boxShadow: "0 8px 20px rgba(0,0,0,0.15)", zIndex: 10 }}
+                                          dragElastic={0.08}
+                                          dragMomentum={false}
+                                          dragTransition={{ bounceStiffness: 650, bounceDamping: 55 }}
+                                          transition={{ layout: { type: "spring", stiffness: 650, damping: 55 } }}
+                                          whileDrag={{ scale: 1.01, boxShadow: 'var(--shadow-elevated)', zIndex: 10 }}
                                           dragListener={isEditMode || isDragEnabled === assignment.id}
                                           onDragEnd={handleDragEnd}
                                         >
                                           {/* Drag Handle */}
                                           <div
-                                            className={`cursor-grab active:cursor-grabbing touch-none select-none p-1.5 -m-1 rounded hover:bg-muted/50 transition-colors ${
-                                              isEditMode ? 'text-primary bg-primary/10' : ''
-                                            }`}
+                                            className={`drag-handle ${isEditMode ? 'text-primary' : ''}`}
                                             onPointerDown={(e) => !isEditMode && handleDragHandlePointerDown(e, assignment.id)}
                                             onPointerUp={handlePointerUp}
                                             onPointerCancel={handlePointerUp}
                                             onContextMenu={(e) => e.preventDefault()}
+                                            aria-label="Drag to reorder assignment"
                                           >
-                                            <GripVertical className={`w-4 h-4 flex-shrink-0 ${isEditMode ? 'text-primary' : 'text-muted-foreground'}`} />
+                                            <GripVertical
+                                              className={`drag-handle-icon w-4 h-4 flex-shrink-0 ${
+                                                isEditMode ? 'text-primary' : 'text-muted-foreground'
+                                              }`}
+                                            />
                                           </div>
                                           <input
                                             type="text"
@@ -711,7 +721,7 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                             </motion.div>
                           )}
                         </AnimatePresence>
-                      </motion.div>
+                      </div>
                     </Reorder.Item>
                   );
                 })}
