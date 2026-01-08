@@ -477,7 +477,7 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                       dragListener={sortBy === 'default' && (isEditMode || isDragEnabled === course.id)}
                       onDragEnd={handleDragEnd}
                     >
-                      <div>
+                      <motion.div layout="position">
                         {/* Course Header */}
                         <div className="p-3 sm:p-4 border-b border-border/30">
                           <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
@@ -711,7 +711,7 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                             </motion.div>
                           )}
                         </AnimatePresence>
-                      </div>
+                      </motion.div>
                     </Reorder.Item>
                   );
                 })}
