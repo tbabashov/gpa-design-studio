@@ -454,7 +454,7 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
 
               <Reorder.Group
                 axis="y"
-                values={sortBy === 'default' ? activeProfile.courses : sortedCourses}
+                values={activeProfile.courses}
                 onReorder={sortBy === 'default' ? reorderCourses : () => {}}
                 className="space-y-4 sm:space-y-6"
                 layoutScroll
@@ -466,13 +466,14 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                     <Reorder.Item
                       key={course.id}
                       value={course}
-                      className={`rounded-2xl border overflow-hidden transition-all ${
+                      className={`rounded-2xl border overflow-hidden transition-colors ${
                         isEditMode && isMobile 
                           ? 'border-primary/50 bg-primary/5' 
                           : 'border-border/50'
                       }`}
+                      layout
                       dragElastic={0.05}
-                      transition={{ layout: { type: "tween", duration: 0.2, ease: "easeOut" } }}
+                      transition={{ type: "spring", stiffness: 400, damping: 35 }}
                       whileDrag={{ scale: 1.02, opacity: 0.9, zIndex: 50, boxShadow: "0 4px 12px rgba(0,0,0,0.15)" }}
                       dragListener={sortBy === 'default' && (isEditMode || isDragEnabled === course.id)}
                       onDragEnd={handleDragEnd}
@@ -623,13 +624,14 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                                         <Reorder.Item
                                           key={assignment.id}
                                           value={assignment}
-                                          className={`flex flex-wrap items-center gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl border bg-background/50 transition-all ${
+                                          className={`flex flex-wrap items-center gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl border bg-background/50 transition-colors ${
                                             isEditMode && isMobile 
                                               ? 'border-primary/30' 
                                               : 'border-border/30'
                                           }`}
+                                          layout
                                           dragElastic={0.05}
-                                          transition={{ layout: { type: "tween", duration: 0.2, ease: "easeOut" } }}
+                                          transition={{ type: "spring", stiffness: 400, damping: 35 }}
                                           whileDrag={{ scale: 1.02, opacity: 0.9, zIndex: 10, boxShadow: "0 4px 12px rgba(0,0,0,0.15)" }}
                                           dragListener={isEditMode || isDragEnabled === assignment.id}
                                           onDragEnd={handleDragEnd}
