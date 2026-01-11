@@ -471,11 +471,10 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                           ? 'border-primary/50 bg-primary/5' 
                           : 'border-border/50'
                       }`}
-                      dragElastic={0.08}
+                      dragElastic={0}
                       dragMomentum={false}
-                      dragTransition={{ bounceStiffness: 650, bounceDamping: 55 }}
-                      transition={{ layout: { type: "spring", stiffness: 650, damping: 55 } }}
-                      whileDrag={{ scale: 1.01, boxShadow: 'var(--shadow-elevated)', zIndex: 50 }}
+                      transition={{ layout: { duration: 0.15 } }}
+                      whileDrag={{ zIndex: 50 }}
                       dragListener={sortBy === 'default' && (isEditMode || isDragEnabled === course.id)}
                       onDragEnd={handleDragEnd}
                     >
@@ -630,11 +629,10 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                                               ? 'border-primary/30' 
                                               : 'border-border/30'
                                           }`}
-                                          dragElastic={0.08}
+                                          dragElastic={0}
                                           dragMomentum={false}
-                                          dragTransition={{ bounceStiffness: 650, bounceDamping: 55 }}
-                                          transition={{ layout: { type: "spring", stiffness: 650, damping: 55 } }}
-                                          whileDrag={{ scale: 1.01, boxShadow: 'var(--shadow-elevated)', zIndex: 10 }}
+                                          transition={{ layout: { duration: 0.15 } }}
+                                          whileDrag={{ zIndex: 10 }}
                                           dragListener={isEditMode || isDragEnabled === assignment.id}
                                           onDragEnd={handleDragEnd}
                                         >
