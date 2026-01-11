@@ -471,9 +471,8 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                           ? 'border-primary/50 bg-primary/5' 
                           : 'border-border/50'
                       }`}
-                      dragTransition={{ bounceStiffness: 300, bounceDamping: 25 }}
-                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                      whileDrag={{ scale: 1.02, boxShadow: "0 8px 20px rgba(0,0,0,0.2)", zIndex: 50 }}
+                      transition={{ layout: { duration: 0.15 } }}
+                      whileDrag={{ scale: 1.01, zIndex: 50 }}
                       dragListener={sortBy === 'default' && (isEditMode || isDragEnabled === course.id)}
                       onDragEnd={handleDragEnd}
                     >
@@ -628,9 +627,8 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
                                               ? 'border-primary/30' 
                                               : 'border-border/30'
                                           }`}
-                                          dragTransition={{ bounceStiffness: 300, bounceDamping: 25 }}
-                                          transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                                          whileDrag={{ scale: 1.02, boxShadow: "0 5px 15px rgba(0,0,0,0.15)", zIndex: 10 }}
+                                          transition={{ layout: { duration: 0.15 } }}
+                                          whileDrag={{ scale: 1.01, zIndex: 10 }}
                                           dragListener={isEditMode || isDragEnabled === assignment.id}
                                           onDragEnd={handleDragEnd}
                                         >
