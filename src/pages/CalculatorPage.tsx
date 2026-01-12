@@ -745,7 +745,7 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
             >
               <TrendingUp className="w-12 h-12 sm:w-16 sm:h-16 mx-auto text-muted-foreground/50 mb-4" />
               <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-2">Welcome to EasyGPA!</h3>
-              <p className="text-muted-foreground mb-6 text-sm sm:text-base px-4">Create a profile above to start tracking your grades</p>
+              <p className="text-muted-foreground mb-6 text-sm sm:text-base px-4">Create a workspace above to start tracking your grades</p>
             </motion.div>
           )}
         </div>

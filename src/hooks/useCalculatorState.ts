@@ -93,40 +93,8 @@ const getInitialState = (): CalculatorState => {
     }
   }
   
-  // Default state for preview
-  const defaultProfile: Profile = {
-    id: generateId(),
-    name: 'Preview',
-    courses: [
-      { 
-        id: generateId(), 
-        name: 'Mathematics', 
-        credits: 4, 
-        isCollapsed: true,
-        inputMode: 'assignments',
-        assignments: [
-          { id: generateId(), name: 'Midterm', grade: 95, weight: 40 },
-          { id: generateId(), name: 'Final', grade: 92, weight: 60 },
-        ]
-      },
-      { 
-        id: generateId(), 
-        name: 'Physics', 
-        credits: 3,
-        isCollapsed: true,
-        inputMode: 'assignments',
-        assignments: [
-          { id: generateId(), name: 'Lab Report', grade: 88, weight: 30 },
-          { id: generateId(), name: 'Exam', grade: 85, weight: 70 },
-        ]
-      },
-    ],
-  };
-  
-  return { 
-    profiles: [defaultProfile], 
-    activeProfileId: defaultProfile.id 
-  };
+  // Start with empty state - no default workspaces
+  return { profiles: [], activeProfileId: null };
 };
 
 // Simple event emitter for cross-component sync

@@ -33,6 +33,7 @@ const DashboardPage = () => {
   const navigate = useNavigate();
   const [calculations, setCalculations] = useState<GpaCalculation[]>([]);
   const [loadingData, setLoadingData] = useState(true);
+  const [displayName, setDisplayName] = useState<string | null>(null);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -43,8 +44,26 @@ const DashboardPage = () => {
   useEffect(() => {
     if (user) {
       fetchCalculations();
+      fetchProfile();
     }
   }, [user]);
+
+  const fetchProfile = async () => {
+    if (!user) return;
+    try {
+      const { data } = await supabase
+        .from('profiles')
+        .select('display_name')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      
+      if (data?.display_name) {
+        setDisplayName(data.display_name);
+      }
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+    }
+  };
 
   const fetchCalculations = async () => {
     try {
@@ -138,6 +157,12 @@ const DashboardPage = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
+                {displayName && (
+                  <div className="flex items-center gap-3">
+                    <User className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-sm font-medium text-foreground">{displayName}</span>
+                  </div>
+                )}
                 <div className="flex items-center gap-3">
                   <Mail className="w-4 h-4 text-muted-foreground" />
                   <span className="text-sm text-muted-foreground truncate">{user.email}</span>
