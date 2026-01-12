@@ -8,28 +8,32 @@ const faqs = [
     answer: 'GPA (Grade Point Average) is a numerical representation of your overall academic performance. It is calculated based on the grades you earn in each course, weighted by credits.',
   },
   {
-    question: 'How do I add a new course?',
-    answer: 'Click the "+ Add Course" button in your active profile, then name the course, assign credits, and add assignments with grades. You can also drag and drop to reorder.',
+    question: 'How do I get started?',
+    answer: 'Create a workspace by entering a name (like "Fall 2025") and clicking create. Then add courses, assignments, and grades. Your GPA is calculated automatically in real-time.',
   },
   {
-    question: 'How is my course GPA calculated?',
-    answer: 'Assignment points are calculated as (Grade% × Weight ÷ 100). The total percentage is then converted into GPA using the standard grade scale.',
+    question: 'How do I add courses and assignments?',
+    answer: 'Inside your workspace, click "+ Add Course" to create a new course. Set the course name and credits, then add assignments with their grades and weights. You can drag and drop to reorder.',
   },
   {
-    question: 'How is overall GPA calculated?',
-    answer: 'Overall GPA = Σ (Course GPA × Course Credits) ÷ Total Credits. This weighted average accounts for courses with different credit values.',
+    question: 'What are workspaces?',
+    answer: 'Workspaces let you organize your courses by semester, year, or program. Create multiple workspaces to track different academic periods separately, each with its own courses and GPA.',
   },
   {
-    question: 'Can I save multiple profiles?',
-    answer: 'Yes! You can create multiple profiles, each with its own courses and GPA calculations. Perfect for tracking different semesters or academic programs.',
+    question: 'How is my GPA calculated?',
+    answer: 'Course GPA is based on your weighted assignment grades converted to the 4.0 scale. Overall GPA = Σ (Course GPA × Credits) ÷ Total Credits, accounting for different credit values.',
+  },
+  {
+    question: 'Can I enter letter grades directly?',
+    answer: 'Yes! Toggle between assignment mode and letter grade mode for each course. In letter grade mode, you can directly enter your final letter grade (A, B+, C, etc.) instead of individual assignments.',
   },
   {
     question: 'Is my data saved automatically?',
-    answer: 'Yes! When you sign in, your data is securely synced to the cloud so you can access it from any device. Your progress is always saved automatically.',
+    answer: 'Yes! When signed in, your data syncs securely to the cloud across all devices. You can also save snapshots of your GPA to your dashboard to track progress over time.',
   },
   {
     question: 'Do I need an account?',
-    answer: 'You can use EasyGPA without an account, but your data will only be saved locally. Sign in with Google or Microsoft to sync your data across devices and never lose your progress.',
+    answer: 'You can use EasyGPA without an account, but your data will only be saved locally in your browser. Sign in with Google or Microsoft to sync across devices and access your dashboard.',
   },
 ];
 
