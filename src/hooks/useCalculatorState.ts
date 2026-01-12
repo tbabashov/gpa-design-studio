@@ -288,13 +288,23 @@ export const useCalculatorState = () => {
     return activeProfile.courses.reduce((sum, c) => sum + c.credits, 0);
   }, [activeProfile]);
 
-  const createProfile = useCallback((name: string) => {
+  const createProfile = useCallback((name: string, initialCourses?: Course[]) => {
     if (!name.trim()) return;
+    
+    // Generate new IDs for courses if provided to avoid conflicts
+    const coursesWithNewIds = initialCourses?.map(course => ({
+      ...course,
+      id: generateId(),
+      assignments: course.assignments.map(a => ({
+        ...a,
+        id: generateId()
+      }))
+    })) || [];
     
     const newProfile: Profile = {
       id: generateId(),
       name: name.trim(),
-      courses: [],
+      courses: coursesWithNewIds,
     };
     
     setState(prev => ({
