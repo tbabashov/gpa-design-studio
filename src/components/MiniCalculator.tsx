@@ -10,7 +10,7 @@ import {
   ListChecks
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useCalculatorState, Assignment, toLetterGrade, letterGradeToPercentage } from '@/hooks/useCalculatorState';
+import { useCalculatorState, Assignment, Course, toLetterGrade, letterGradeToPercentage } from '@/hooks/useCalculatorState';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useState, useRef, useCallback } from 'react';
 
@@ -68,7 +68,33 @@ const MiniCalculator = () => {
     setIsDragEnabled(null);
   }, []);
 
-  const courses = activeProfile?.courses || [];
+  // Demo courses to show when user has no data
+  const demoCourses: Course[] = [
+    { id: 'demo-1', name: 'Calculus II', credits: 4, isCollapsed: true, inputMode: 'letterGrade', manualGrade: 92, assignments: [] },
+    { id: 'demo-2', name: 'Data Structures', credits: 3, isCollapsed: true, inputMode: 'letterGrade', manualGrade: 88, assignments: [] },
+    { id: 'demo-3', name: 'Physics I', credits: 4, isCollapsed: true, inputMode: 'letterGrade', manualGrade: 85, assignments: [] },
+    { id: 'demo-4', name: 'English Comp', credits: 3, isCollapsed: true, inputMode: 'letterGrade', manualGrade: 95, assignments: [] },
+  ];
+
+  const userCourses = activeProfile?.courses || [];
+  const isShowingDemo = userCourses.length === 0;
+  const courses = isShowingDemo ? demoCourses : userCourses;
+
+  // Calculate demo GPA
+  const calculateDemoGPA = () => {
+    let totalPoints = 0;
+    let totalCredits = 0;
+    demoCourses.forEach(course => {
+      if (course.manualGrade !== undefined && course.credits > 0) {
+        const gpa = course.manualGrade >= 94 ? 4 : course.manualGrade >= 90 ? 3.67 : course.manualGrade >= 87 ? 3.33 : course.manualGrade >= 83 ? 3 : course.manualGrade >= 80 ? 2.67 : 2.33;
+        totalPoints += gpa * course.credits;
+        totalCredits += course.credits;
+      }
+    });
+    return totalCredits > 0 ? totalPoints / totalCredits : 0;
+  };
+
+  const displayGPA = isShowingDemo ? calculateDemoGPA() : calculateOverallGPA();
 
   return (
     <motion.div 
@@ -90,16 +116,25 @@ const MiniCalculator = () => {
         <div className="text-right">
           <div className="text-[10px] text-muted-foreground uppercase tracking-wider">GPA</div>
           <div className="text-lg sm:text-xl font-display font-bold gradient-text">
-            {calculateOverallGPA().toFixed(2)}
+            {displayGPA.toFixed(2)}
           </div>
         </div>
       </div>
+
+      {/* Demo indicator */}
+      {isShowingDemo && (
+        <div className="mb-3 px-3 py-2 rounded-lg bg-secondary/10 border border-secondary/20">
+          <p className="text-[10px] sm:text-xs text-secondary text-center">
+            ✨ Sample data — add courses in the calculator to see your own GPA
+          </p>
+        </div>
+      )}
 
       {/* Course List */}
       <Reorder.Group
         axis="y"
         values={courses}
-        onReorder={reorderCourses}
+        onReorder={isShowingDemo ? () => {} : reorderCourses}
         className="space-y-2"
         layoutScroll
       >
@@ -113,8 +148,8 @@ const MiniCalculator = () => {
               className="rounded-xl bg-muted/30 hover:bg-muted/50 transition-colors"
               dragTransition={{ bounceStiffness: 300, bounceDamping: 25 }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              whileDrag={{ scale: 1.02, boxShadow: "0 8px 20px rgba(0,0,0,0.2)", zIndex: 10 }}
-              dragListener={isDragEnabled === course.id}
+              whileDrag={!isShowingDemo ? { scale: 1.02, boxShadow: "0 8px 20px rgba(0,0,0,0.2)", zIndex: 10 } : undefined}
+              dragListener={!isShowingDemo && isDragEnabled === course.id}
               onDragEnd={handleDragEnd}
             >
               <div className="p-2 sm:p-3">
@@ -122,8 +157,8 @@ const MiniCalculator = () => {
                 <div className="flex items-center gap-1.5 sm:gap-2">
                   {/* Left side: drag handle + book icon + name */}
                   <div className="flex items-center gap-1 sm:gap-2 flex-1 min-w-0">
-                    {/* Drag Handle - only on desktop */}
-                      {!isMobile && (
+                    {/* Drag Handle - only on desktop and not in demo mode */}
+                      {!isMobile && !isShowingDemo && (
                         <div
                           className="drag-handle"
                           onPointerDown={(e) => handleDragHandlePointerDown(e, course.id)}
@@ -138,13 +173,19 @@ const MiniCalculator = () => {
                     <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
                       <BookOpen className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-primary" />
                     </div>
-                    <input
-                      type="text"
-                      value={course.name}
-                      onChange={(e) => updateCourse(course.id, { name: e.target.value })}
-                      className="flex-1 bg-transparent text-xs sm:text-sm font-medium text-foreground focus:outline-none min-w-0"
-                      placeholder="Course"
-                    />
+                    {isShowingDemo ? (
+                      <span className="flex-1 text-xs sm:text-sm font-medium text-foreground truncate">
+                        {course.name}
+                      </span>
+                    ) : (
+                      <input
+                        type="text"
+                        value={course.name}
+                        onChange={(e) => updateCourse(course.id, { name: e.target.value })}
+                        className="flex-1 bg-transparent text-xs sm:text-sm font-medium text-foreground focus:outline-none min-w-0"
+                        placeholder="Course"
+                      />
+                    )}
                   </div>
                   
                   {/* Right side: grade box + mode toggle + credits + % + collapse + delete */}
@@ -152,26 +193,32 @@ const MiniCalculator = () => {
                     {/* Letter Grade Box */}
                     {course.inputMode === 'letterGrade' ? (
                       <div className="flex items-center gap-0.5">
-                        <input
-                          type="text"
-                          value={course.manualGrade ?? ''}
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            const fromLetter = letterGradeToPercentage(val.toUpperCase());
-                            if (fromLetter !== undefined) {
-                              updateCourse(course.id, { manualGrade: fromLetter });
-                            } else {
-                              const num = parseFloat(val);
-                              if (!isNaN(num) && num >= 0 && num <= 100) {
-                                updateCourse(course.id, { manualGrade: num });
-                              } else if (val === '') {
-                                updateCourse(course.id, { manualGrade: undefined });
+                        {isShowingDemo ? (
+                          <div className="w-10 sm:w-12 text-[10px] sm:text-xs text-center px-1 py-0.5 rounded-l bg-muted/50 border border-border/50 text-foreground">
+                            {course.manualGrade}
+                          </div>
+                        ) : (
+                          <input
+                            type="text"
+                            value={course.manualGrade ?? ''}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              const fromLetter = letterGradeToPercentage(val.toUpperCase());
+                              if (fromLetter !== undefined) {
+                                updateCourse(course.id, { manualGrade: fromLetter });
+                              } else {
+                                const num = parseFloat(val);
+                                if (!isNaN(num) && num >= 0 && num <= 100) {
+                                  updateCourse(course.id, { manualGrade: num });
+                                } else if (val === '') {
+                                  updateCourse(course.id, { manualGrade: undefined });
+                                }
                               }
-                            }
-                          }}
-                          className="w-10 sm:w-12 text-[10px] sm:text-xs text-center px-1 py-0.5 rounded-l bg-muted/50 border border-border/50 text-foreground"
-                          placeholder="%"
-                        />
+                            }}
+                            className="w-10 sm:w-12 text-[10px] sm:text-xs text-center px-1 py-0.5 rounded-l bg-muted/50 border border-border/50 text-foreground"
+                            placeholder="%"
+                          />
+                        )}
                         <div className="w-8 sm:w-9 text-[10px] sm:text-xs text-center font-semibold px-1 py-0.5 rounded-r bg-primary/20 border border-primary/30 text-primary border-l-0">
                           {course.manualGrade !== undefined ? toLetterGrade(course.manualGrade) : '-'}
                         </div>
@@ -181,153 +228,169 @@ const MiniCalculator = () => {
                         {percentage > 0 ? toLetterGrade(Math.round(percentage)) : '-'}
                       </div>
                     )}
-                    <button
-                      onClick={() => updateCourse(course.id, { 
-                        inputMode: course.inputMode === 'assignments' ? 'letterGrade' : 'assignments' 
-                      })}
-                      className={`p-1 rounded transition-all duration-200 hover:scale-110 ${
-                        course.inputMode === 'assignments' 
-                          ? 'bg-primary/20 text-primary hover:bg-primary/30' 
-                          : 'bg-muted/50 text-muted-foreground hover:text-foreground hover:bg-muted'
-                      }`}
-                      title={course.inputMode === 'assignments' ? 'Using assignments' : 'Click to use assignments'}
-                    >
-                      <ListChecks className="w-3 h-3" />
-                    </button>
-                    <input
-                      type="number"
-                      value={course.credits}
-                      onChange={(e) => updateCourse(course.id, { credits: parseInt(e.target.value) || 0 })}
-                      min="0"
-                      max="12"
-                      className="w-8 sm:w-12 text-[10px] sm:text-xs text-center px-0.5 sm:px-1 py-0.5 rounded bg-muted border border-border text-foreground"
-                      title="Credits"
-                    />
+                    {!isShowingDemo && (
+                      <button
+                        onClick={() => updateCourse(course.id, { 
+                          inputMode: course.inputMode === 'assignments' ? 'letterGrade' : 'assignments' 
+                        })}
+                        className={`p-1 rounded transition-all duration-200 hover:scale-110 ${
+                          course.inputMode === 'assignments' 
+                            ? 'bg-primary/20 text-primary hover:bg-primary/30' 
+                            : 'bg-muted/50 text-muted-foreground hover:text-foreground hover:bg-muted'
+                        }`}
+                        title={course.inputMode === 'assignments' ? 'Using assignments' : 'Click to use assignments'}
+                      >
+                        <ListChecks className="w-3 h-3" />
+                      </button>
+                    )}
+                    {isShowingDemo ? (
+                      <span className="w-8 sm:w-12 text-[10px] sm:text-xs text-center text-muted-foreground">
+                        {course.credits} cr
+                      </span>
+                    ) : (
+                      <input
+                        type="number"
+                        value={course.credits}
+                        onChange={(e) => updateCourse(course.id, { credits: parseInt(e.target.value) || 0 })}
+                        min="0"
+                        max="12"
+                        className="w-8 sm:w-12 text-[10px] sm:text-xs text-center px-0.5 sm:px-1 py-0.5 rounded bg-muted border border-border text-foreground"
+                        title="Credits"
+                      />
+                    )}
                     <div className="text-right min-w-[30px] sm:min-w-[40px]">
                       <div className="text-[10px] sm:text-xs font-semibold text-foreground">{percentage.toFixed(0)}%</div>
                       <div className="text-[8px] sm:text-[10px] text-secondary">{gpa.toFixed(2)}</div>
                     </div>
-                    <button
-                      onClick={() => updateCourse(course.id, { isCollapsed: !course.isCollapsed })}
-                      className="p-0.5 sm:p-1 hover:bg-muted rounded"
-                    >
-                      {course.isCollapsed ? (
-                        <ChevronDown className="w-3 h-3 text-muted-foreground" />
-                      ) : (
-                        <ChevronUp className="w-3 h-3 text-muted-foreground" />
-                      )}
-                    </button>
-                    <button
-                      onClick={() => deleteCourse(course.id)}
-                      className="p-0.5 sm:p-1 hover:bg-destructive/10 rounded text-muted-foreground hover:text-destructive"
-                    >
-                      <Trash2 className="w-3 h-3" />
-                    </button>
+                    {!isShowingDemo && (
+                      <>
+                        <button
+                          onClick={() => updateCourse(course.id, { isCollapsed: !course.isCollapsed })}
+                          className="p-0.5 sm:p-1 hover:bg-muted rounded"
+                        >
+                          {course.isCollapsed ? (
+                            <ChevronDown className="w-3 h-3 text-muted-foreground" />
+                          ) : (
+                            <ChevronUp className="w-3 h-3 text-muted-foreground" />
+                          )}
+                        </button>
+                        <button
+                          onClick={() => deleteCourse(course.id)}
+                          className="p-0.5 sm:p-1 hover:bg-destructive/10 rounded text-muted-foreground hover:text-destructive"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      </>
+                    )}
                   </div>
                 </div>
 
-                {/* Assignments (only shown when in assignments mode and expanded) */}
-                <AnimatePresence>
-                  {!course.isCollapsed && course.inputMode === 'assignments' && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                      className="overflow-hidden"
-                    >
-                      <div className="mt-2 ml-2 sm:ml-5">
-                        <div className="space-y-1">
-                          <Reorder.Group
-                            axis="y"
-                            values={course.assignments}
-                            onReorder={(newOrder) => reorderAssignments(course.id, newOrder)}
-                            className="space-y-1"
-                            layoutScroll
-                          >
-                            {course.assignments.map(assignment => (
-                                <Reorder.Item
-                                  key={assignment.id}
-                                  value={assignment}
-                                  className="flex items-center gap-1 sm:gap-2 p-1.5 sm:p-2 rounded-lg bg-background/30 hover:bg-background/50 transition-colors"
-                                  dragTransition={{ bounceStiffness: 300, bounceDamping: 25 }}
-                                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                                  whileDrag={{ scale: 1.02, boxShadow: "0 5px 15px rgba(0,0,0,0.15)" }}
-                                  dragListener={isDragEnabled === assignment.id}
-                                  onDragEnd={handleDragEnd}
-                                >
-                                 <div
-                                   className="drag-handle"
-                                   onPointerDown={(e) => handleDragHandlePointerDown(e, assignment.id)}
-                                   onPointerUp={handlePointerUp}
-                                   onPointerCancel={handlePointerUp}
-                                   onContextMenu={(e) => e.preventDefault()}
-                                   aria-label="Drag to reorder assignment"
-                                 >
-                                   <GripVertical className="drag-handle-icon w-2.5 h-2.5 text-muted-foreground" />
-                                 </div>
-                                <input
-                                  type="text"
-                                  value={assignment.name}
-                                  onChange={(e) => updateAssignment(course.id, assignment.id, { name: e.target.value })}
-                                  className="flex-1 bg-transparent text-[10px] sm:text-xs text-foreground focus:outline-none min-w-0"
-                                  placeholder="Assignment"
-                                />
-                                <input
-                                  type="number"
-                                  value={assignment.grade || ''}
-                                  onChange={(e) => updateAssignment(course.id, assignment.id, { grade: parseFloat(e.target.value) || 0 })}
-                                  min="0"
-                                  max="100"
-                                  className="w-10 sm:w-12 text-[10px] sm:text-xs text-center px-1 py-0.5 rounded bg-muted border border-border text-foreground"
-                                  placeholder="%"
-                                />
-                                <input
-                                  type="number"
-                                  value={assignment.weight || ''}
-                                  onChange={(e) => updateAssignment(course.id, assignment.id, { weight: parseFloat(e.target.value) || 0 })}
-                                  min="0"
-                                  max="100"
-                                  className="w-10 sm:w-12 text-[10px] sm:text-xs text-center px-1 py-0.5 rounded bg-muted border border-border text-foreground"
-                                  placeholder="wt"
-                                />
-                                <button
-                                  onClick={() => deleteAssignment(course.id, assignment.id)}
-                                  className="p-0.5 hover:bg-destructive/10 rounded text-muted-foreground hover:text-destructive"
-                                >
-                                  <Trash2 className="w-2.5 h-2.5" />
-                                </button>
-                              </Reorder.Item>
-                            ))}
-                          </Reorder.Group>
-                          <button
-                            onClick={() => addAssignment(course.id)}
-                            className="flex items-center gap-1 text-[10px] sm:text-xs text-primary hover:text-primary/80 transition-colors ml-1"
-                          >
-                            <Plus className="w-3 h-3" />
-                            Add Assignment
-                          </button>
+                {/* Assignments (only shown when in assignments mode and expanded, not in demo mode) */}
+                {!isShowingDemo && (
+                  <AnimatePresence>
+                    {!course.isCollapsed && course.inputMode === 'assignments' && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="mt-2 ml-2 sm:ml-5">
+                          <div className="space-y-1">
+                            <Reorder.Group
+                              axis="y"
+                              values={course.assignments}
+                              onReorder={(newOrder) => reorderAssignments(course.id, newOrder)}
+                              className="space-y-1"
+                              layoutScroll
+                            >
+                              {course.assignments.map(assignment => (
+                                  <Reorder.Item
+                                    key={assignment.id}
+                                    value={assignment}
+                                    className="flex items-center gap-1 sm:gap-2 p-1.5 sm:p-2 rounded-lg bg-background/30 hover:bg-background/50 transition-colors"
+                                    dragTransition={{ bounceStiffness: 300, bounceDamping: 25 }}
+                                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                    whileDrag={{ scale: 1.02, boxShadow: "0 5px 15px rgba(0,0,0,0.15)" }}
+                                    dragListener={isDragEnabled === assignment.id}
+                                    onDragEnd={handleDragEnd}
+                                  >
+                                   <div
+                                     className="drag-handle"
+                                     onPointerDown={(e) => handleDragHandlePointerDown(e, assignment.id)}
+                                     onPointerUp={handlePointerUp}
+                                     onPointerCancel={handlePointerUp}
+                                     onContextMenu={(e) => e.preventDefault()}
+                                     aria-label="Drag to reorder assignment"
+                                   >
+                                     <GripVertical className="drag-handle-icon w-2.5 h-2.5 text-muted-foreground" />
+                                   </div>
+                                  <input
+                                    type="text"
+                                    value={assignment.name}
+                                    onChange={(e) => updateAssignment(course.id, assignment.id, { name: e.target.value })}
+                                    className="flex-1 bg-transparent text-[10px] sm:text-xs text-foreground focus:outline-none min-w-0"
+                                    placeholder="Assignment"
+                                  />
+                                  <input
+                                    type="number"
+                                    value={assignment.grade || ''}
+                                    onChange={(e) => updateAssignment(course.id, assignment.id, { grade: parseFloat(e.target.value) || 0 })}
+                                    min="0"
+                                    max="100"
+                                    className="w-10 sm:w-12 text-[10px] sm:text-xs text-center px-1 py-0.5 rounded bg-muted border border-border text-foreground"
+                                    placeholder="%"
+                                  />
+                                  <input
+                                    type="number"
+                                    value={assignment.weight || ''}
+                                    onChange={(e) => updateAssignment(course.id, assignment.id, { weight: parseFloat(e.target.value) || 0 })}
+                                    min="0"
+                                    max="100"
+                                    className="w-10 sm:w-12 text-[10px] sm:text-xs text-center px-1 py-0.5 rounded bg-muted border border-border text-foreground"
+                                    placeholder="wt"
+                                  />
+                                  <button
+                                    onClick={() => deleteAssignment(course.id, assignment.id)}
+                                    className="p-0.5 hover:bg-destructive/10 rounded text-muted-foreground hover:text-destructive"
+                                  >
+                                    <Trash2 className="w-2.5 h-2.5" />
+                                  </button>
+                                </Reorder.Item>
+                              ))}
+                            </Reorder.Group>
+                            <button
+                              onClick={() => addAssignment(course.id)}
+                              className="flex items-center gap-1 text-[10px] sm:text-xs text-primary hover:text-primary/80 transition-colors ml-1"
+                            >
+                              <Plus className="w-3 h-3" />
+                              Add Assignment
+                            </button>
+                          </div>
                         </div>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                )}
               </div>
             </Reorder.Item>
           );
         })}
       </Reorder.Group>
 
-      {/* Add Course Button */}
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={addCourse}
-        className="w-full mt-3 text-xs"
-      >
-        <Plus className="w-3 h-3 mr-1" />
-        Add Course
-      </Button>
+      {/* Add Course Button - only when not showing demo */}
+      {!isShowingDemo && (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={addCourse}
+          className="w-full mt-3 text-xs"
+        >
+          <Plus className="w-3 h-3 mr-1" />
+          Add Course
+        </Button>
+      )}
 
       {/* Bottom Stats */}
       <div className="mt-3 pt-3 border-t border-border/50">

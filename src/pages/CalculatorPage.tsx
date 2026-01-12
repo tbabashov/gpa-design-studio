@@ -30,7 +30,6 @@ import Footer from '@/components/Footer';
 import GPAGoalTracker from '@/components/GPAGoalTracker';
 import WhatIfCalculator from '@/components/WhatIfCalculator';
 import ExportShare from '@/components/ExportShare';
-import DemoCalculatorPreview from '@/components/DemoCalculatorPreview';
 import { useCalculatorState, Course, toLetterGrade, letterGradeToPercentage } from '@/hooks/useCalculatorState';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -739,12 +738,15 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
 
           {/* Empty State */}
           {!activeProfile && state.profiles.length === 0 && (
-            <DemoCalculatorPreview 
-              onUseTemplate={(courses) => {
-                createProfile('My Semester', courses);
-                toast.success('Template workspace created!');
-              }}
-            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-center py-12 sm:py-16 rounded-2xl border border-border/50"
+            >
+              <TrendingUp className="w-12 h-12 sm:w-16 sm:h-16 mx-auto text-muted-foreground/50 mb-4" />
+              <h3 className="text-lg sm:text-xl font-semibold text-foreground mb-2">Welcome to EasyGPA!</h3>
+              <p className="text-muted-foreground mb-6 text-sm sm:text-base px-4">Create a workspace above to start tracking your grades</p>
+            </motion.div>
           )}
         </div>
       </main>
