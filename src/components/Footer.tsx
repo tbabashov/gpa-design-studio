@@ -23,7 +23,7 @@ const Footer = ({ onNavigate }: FooterProps) => {
 
   const socialLinks = [
     { icon: Twitter, label: 'Twitter', href: '#' },
-    { icon: Github, label: 'GitHub', href: '#' },
+    { icon: Github, label: 'GitHub', href: 'https://github.com/tbabashov' },
     { icon: Linkedin, label: 'LinkedIn', href: '#' },
   ];
 
