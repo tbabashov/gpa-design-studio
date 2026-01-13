@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Calculator, User, LogOut, LayoutDashboard, Settings, ChevronDown } from 'lucide-react';
+import { Menu, X, Calculator, User, LogOut, LayoutDashboard, Settings, ChevronDown, Home, Sparkles, Mail } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import EasyGPALogo from './EasyGPALogo';
@@ -34,9 +34,9 @@ const Navbar = ({ onNavigate }: NavbarProps) => {
   }, []);
 
   const navItems = [
-    { label: 'Home', section: 'home' },
-    { label: 'Features', section: 'features' },
-    { label: 'Contact', section: 'contact' },
+    { label: 'Home', section: 'home', icon: Home },
+    { label: 'Features', section: 'features', icon: Sparkles },
+    { label: 'Contact', section: 'contact', icon: Mail },
   ];
 
   const handleNavClick = (section: string) => {
@@ -194,6 +194,7 @@ const Navbar = ({ onNavigate }: NavbarProps) => {
                       className="w-full justify-start text-lg"
                       onClick={() => handleNavClick(item.section)}
                     >
+                      <item.icon className="w-5 h-5 mr-3" />
                       {item.label}
                     </Button>
                   </motion.div>
