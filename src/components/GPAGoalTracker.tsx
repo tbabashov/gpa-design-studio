@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Target, TrendingUp, Edit2, Check, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 
 interface GPAGoalTrackerProps {
   currentGPA: number;
@@ -10,6 +12,7 @@ interface GPAGoalTrackerProps {
 }
 
 const GPAGoalTracker = ({ currentGPA, targetGPA, onSetTarget }: GPAGoalTrackerProps) => {
+  const { user } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [inputValue, setInputValue] = useState(targetGPA?.toString() || '');
 
@@ -21,11 +24,26 @@ const GPAGoalTracker = ({ currentGPA, targetGPA, onSetTarget }: GPAGoalTrackerPr
   const remaining = targetGPA ? Math.max(targetGPA - currentGPA, 0) : 0;
   const isGoalMet = targetGPA && currentGPA >= targetGPA;
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const value = parseFloat(inputValue);
     if (value && value >= 0 && value <= 4) {
       onSetTarget(value);
       setIsEditing(false);
+      
+      // Unlock goal_setter achievement
+      if (user) {
+        try {
+          await supabase
+            .from('user_achievements')
+            .upsert({
+              user_id: user.id,
+              achievement_id: 'goal_setter',
+              seen: false,
+            }, { onConflict: 'user_id,achievement_id' });
+        } catch (error) {
+          console.error('Error unlocking achievement:', error);
+        }
+      }
     }
   };
 

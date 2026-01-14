@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { motion } from 'framer-motion';
@@ -20,6 +20,8 @@ import {
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import Navbar from '@/components/Navbar';
 import { toast } from '@/hooks/use-toast';
+import { AchievementsSection } from '@/components/AchievementsSection';
+import { useAchievementChecker } from '@/hooks/useAchievementChecker';
 
 interface GpaCalculation {
   id: string;
@@ -31,9 +33,11 @@ interface GpaCalculation {
 const DashboardPage = () => {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [calculations, setCalculations] = useState<GpaCalculation[]>([]);
   const [loadingData, setLoadingData] = useState(true);
   const [displayName, setDisplayName] = useState<string | null>(null);
+  const { checkAchievements } = useAchievementChecker();
 
   useEffect(() => {
     if (!loading && !user) {
@@ -45,8 +49,19 @@ const DashboardPage = () => {
     if (user) {
       fetchCalculations();
       fetchProfile();
+      // Check achievements when dashboard loads
+      checkAchievements();
     }
   }, [user]);
+
+  // Scroll to achievements section if hash is present
+  useEffect(() => {
+    if (location.hash === '#achievements') {
+      setTimeout(() => {
+        document.getElementById('achievements')?.scrollIntoView({ behavior: 'smooth' });
+      }, 300);
+    }
+  }, [location.hash]);
 
   const fetchProfile = async () => {
     if (!user) return;
@@ -256,6 +271,11 @@ const DashboardPage = () => {
               )}
             </CardContent>
           </Card>
+
+          {/* Achievements Section */}
+          <div className="mb-8">
+            <AchievementsSection />
+          </div>
 
           {/* Recent Calculations */}
           <Card>
