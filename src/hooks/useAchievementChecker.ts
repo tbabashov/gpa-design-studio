@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAchievements } from './useAchievements';
@@ -23,9 +23,16 @@ export function useAchievementChecker() {
       // Fetch profile
       const { data: profile } = await supabase
         .from('profiles')
-        .select('display_name')
+        .select('display_name, avatar_url')
         .eq('user_id', user.id)
         .maybeSingle();
+
+      // Fetch friends count
+      const { count: friendCount } = await supabase
+        .from('friends')
+        .select('*', { count: 'exact', head: true })
+        .or(`user_id.eq.${user.id},friend_id.eq.${user.id}`)
+        .eq('status', 'accepted');
 
       const calcCount = calculations?.length || 0;
 
@@ -92,19 +99,29 @@ export function useAchievementChecker() {
             }
           }
         }
+
+        // Check consistent achievement (7 unique days)
+        const uniqueCalcDays = new Set(calculations.map(c => new Date(c.created_at).toDateString()));
+        if (uniqueCalcDays.size >= 7 && !hasAchievement('consistent')) {
+          await unlockAchievement('consistent');
+        }
       }
 
-      // Check profile achievement
-      if (profile?.display_name && profile.display_name.trim() !== '' && !hasAchievement('first_profile')) {
-        await unlockAchievement('first_profile');
+      // Check profile picture achievement
+      if (profile?.avatar_url && profile.avatar_url.trim() !== '' && !hasAchievement('profile_pro')) {
+        await unlockAchievement('profile_pro');
       }
 
-      // Check early bird achievement (joined within first month - January 2026)
-      const joinDate = new Date(user.created_at);
-      const launchDate = new Date('2026-01-01');
-      const oneMonthLater = new Date('2026-02-01');
-      if (joinDate >= launchDate && joinDate < oneMonthLater && !hasAchievement('early_bird')) {
-        await unlockAchievement('early_bird');
+      // Check friend achievements
+      const currentFriendCount = friendCount || 0;
+      if (currentFriendCount >= 1 && !hasAchievement('first_friend')) {
+        await unlockAchievement('first_friend');
+      }
+      if (currentFriendCount >= 3 && !hasAchievement('social_butterfly')) {
+        await unlockAchievement('social_butterfly');
+      }
+      if (currentFriendCount >= 5 && !hasAchievement('popular')) {
+        await unlockAchievement('popular');
       }
 
     } catch (error) {
