@@ -1,4 +1,4 @@
-import { Trophy, Star, Target, Zap, Award, Crown, Flame, BookOpen, GraduationCap, Sparkles, Medal, TrendingUp } from 'lucide-react';
+import { Trophy, Star, Target, Award, Crown, Flame, BookOpen, GraduationCap, Sparkles, Medal, TrendingUp, Camera, Users, UserPlus, Heart } from 'lucide-react';
 
 export interface Achievement {
   id: string;
@@ -44,7 +44,7 @@ export const ACHIEVEMENTS: Achievement[] = [
   },
   {
     id: 'gpa_3_5',
-    name: 'High Achiever',
+    name: "Dean's List",
     description: 'Achieve a GPA of 3.5 or higher',
     icon: Award,
     color: 'text-emerald-500',
@@ -75,10 +75,18 @@ export const ACHIEVEMENTS: Achievement[] = [
     bgColor: 'bg-red-500/10',
   },
   {
-    id: 'first_profile',
+    id: 'consistent',
+    name: 'Consistent',
+    description: 'Log your GPA for 7 days total',
+    icon: Target,
+    color: 'text-teal-500',
+    bgColor: 'bg-teal-500/10',
+  },
+  {
+    id: 'profile_pro',
     name: 'Profile Pro',
-    description: 'Set up your display name',
-    icon: Sparkles,
+    description: 'Set up your profile picture',
+    icon: Camera,
     color: 'text-pink-500',
     bgColor: 'bg-pink-500/10',
   },
@@ -99,12 +107,28 @@ export const ACHIEVEMENTS: Achievement[] = [
     bgColor: 'bg-indigo-500/10',
   },
   {
-    id: 'early_bird',
-    name: 'Early Bird',
-    description: 'Join EasyGPA within the first month of launch',
-    icon: Zap,
+    id: 'first_friend',
+    name: 'First Friend',
+    description: 'Add your first friend',
+    icon: UserPlus,
     color: 'text-violet-500',
     bgColor: 'bg-violet-500/10',
+  },
+  {
+    id: 'social_butterfly',
+    name: 'Social Butterfly',
+    description: 'Have 3 friends on your list',
+    icon: Users,
+    color: 'text-rose-500',
+    bgColor: 'bg-rose-500/10',
+  },
+  {
+    id: 'popular',
+    name: 'Popular',
+    description: 'Have 5 friends on your list',
+    icon: Heart,
+    color: 'text-fuchsia-500',
+    bgColor: 'bg-fuchsia-500/10',
   },
 ];
 

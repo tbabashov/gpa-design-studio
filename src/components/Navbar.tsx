@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Calculator, User, LogOut, LayoutDashboard, Settings, ChevronDown, Home, Sparkles, Mail } from 'lucide-react';
+import { Menu, X, Calculator, User, LogOut, LayoutDashboard, Settings, ChevronDown, Home, Sparkles, Mail, Users } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
+import { useFriendRequests } from '@/hooks/useFriendRequests';
 import EasyGPALogo from './EasyGPALogo';
 import ThemeToggle from './ThemeToggle';
 import {
@@ -24,6 +25,7 @@ const Navbar = ({ onNavigate }: NavbarProps) => {
   const [isProfileExpanded, setIsProfileExpanded] = useState(false);
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const { pendingCount } = useFriendRequests();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -115,6 +117,15 @@ const Navbar = ({ onNavigate }: NavbarProps) => {
                       <DropdownMenuItem onClick={() => navigate('/dashboard')}>
                         <LayoutDashboard className="w-4 h-4 mr-2" />
                         Dashboard
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate('/friends')} className="relative">
+                        <Users className="w-4 h-4 mr-2" />
+                        Friends
+                        {pendingCount > 0 && (
+                          <span className="absolute right-2 bg-primary text-primary-foreground text-xs rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
+                            {pendingCount}
+                          </span>
+                        )}
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => navigate('/profile')}>
                         <Settings className="w-4 h-4 mr-2" />
@@ -236,6 +247,22 @@ const Navbar = ({ onNavigate }: NavbarProps) => {
                           </Button>
                           <Button 
                             variant="ghost" 
+                            className="w-full justify-start text-base relative"
+                            onClick={() => {
+                              navigate('/friends');
+                              setIsMobileMenuOpen(false);
+                            }}
+                          >
+                            <Users className="w-4 h-4 mr-2" />
+                            Friends
+                            {pendingCount > 0 && (
+                              <span className="ml-auto bg-primary text-primary-foreground text-xs rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
+                                {pendingCount}
+                              </span>
+                            )}
+                          </Button>
+                          <Button 
+                            variant="ghost" 
                             className="w-full justify-start text-base"
                             onClick={() => {
                               navigate('/profile');
@@ -246,7 +273,7 @@ const Navbar = ({ onNavigate }: NavbarProps) => {
                             Settings
                           </Button>
                           <Button 
-                            variant="ghost" 
+                            variant="ghost"
                             className="w-full justify-start text-base text-red-500 hover:text-red-500 hover:bg-red-500/10"
                             onClick={() => {
                               signOut();
