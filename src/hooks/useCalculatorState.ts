@@ -19,6 +19,7 @@ export interface Course {
   isCollapsed: boolean;
   inputMode: CourseInputMode;
   manualGrade?: number; // 0-100 percentage when using letterGrade mode
+  manualLetterGrade?: string; // Direct letter grade entry (A, B+, C-, etc.)
 }
 
 export interface Profile {
@@ -249,6 +250,12 @@ export const useCalculatorState = () => {
   const calculateCourseGPA = useCallback((course: Course) => {
     // If using manual letter grade mode
     if (course.inputMode === 'letterGrade') {
+      // If user entered a letter grade directly, use its mapped percentage for GPA
+      if (course.manualLetterGrade) {
+        const percentage = letterGradeToPercentage(course.manualLetterGrade) ?? 0;
+        return { percentage, gpa: toGPA(Math.round(percentage)), letterGrade: course.manualLetterGrade };
+      }
+      // Otherwise use the percentage they entered
       const percentage = course.manualGrade ?? 0;
       return { percentage, gpa: toGPA(Math.round(percentage)) };
     }
@@ -351,7 +358,7 @@ export const useCalculatorState = () => {
   const addCourse = useCallback(() => {
     if (!activeProfile) return;
     
-    const newCourse: Course = {
+  const newCourse: Course = {
       id: generateId(),
       name: '',
       credits: 6,
@@ -359,6 +366,7 @@ export const useCalculatorState = () => {
       isCollapsed: false,
       inputMode: 'assignments',
       manualGrade: undefined,
+      manualLetterGrade: undefined,
     };
     
     setState(prev => ({
