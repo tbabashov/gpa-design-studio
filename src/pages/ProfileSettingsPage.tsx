@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { motion } from 'framer-motion';
-import { User, Mail, Calendar, Settings, Save, ArrowLeft, Moon, Sun, Monitor, Lock, Trash2, AlertTriangle, Camera, Upload } from 'lucide-react';
+import { User, Mail, Calendar, Settings, Save, ArrowLeft, Moon, Sun, Monitor, Lock, Trash2, AlertTriangle, Camera, Upload, X } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -146,6 +146,44 @@ const ProfileSettingsPage = () => {
       toast({
         title: "Error",
         description: "Failed to upload avatar. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
+
+  const handleRemoveAvatar = async () => {
+    if (!user || !avatarUrl) return;
+    
+    setUploadingAvatar(true);
+    try {
+      // Remove from storage
+      const fileName = `${user.id}/avatar`;
+      await supabase.storage.from('avatars').remove([`${fileName}.png`, `${fileName}.jpg`, `${fileName}.jpeg`, `${fileName}.gif`, `${fileName}.webp`]);
+
+      // Update profile to remove avatar URL
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({
+          avatar_url: null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('user_id', user.id);
+
+      if (updateError) throw updateError;
+
+      setAvatarUrl(null);
+      
+      toast({
+        title: "Avatar removed",
+        description: "Your profile picture has been removed.",
+      });
+    } catch (error) {
+      console.error('Error removing avatar:', error);
+      toast({
+        title: "Error",
+        description: "Failed to remove avatar. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -339,16 +377,30 @@ const ProfileSettingsPage = () => {
                   onChange={handleAvatarUpload}
                   className="hidden"
                 />
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={uploadingAvatar}
-                  className="gap-2"
-                >
-                  <Upload className="w-4 h-4" />
-                  {uploadingAvatar ? 'Uploading...' : 'Change Photo'}
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploadingAvatar}
+                    className="gap-2"
+                  >
+                    <Upload className="w-4 h-4" />
+                    {uploadingAvatar ? 'Processing...' : 'Change Photo'}
+                  </Button>
+                  {avatarUrl && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleRemoveAvatar}
+                      disabled={uploadingAvatar}
+                      className="gap-2 text-destructive hover:text-destructive"
+                    >
+                      <X className="w-4 h-4" />
+                      Remove
+                    </Button>
+                  )}
+                </div>
               </div>
 
               <div className="space-y-2">
