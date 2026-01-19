@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Menu, X, Calculator, User, LogOut, LayoutDashboard, Settings, ChevronDown, Home, Sparkles, Mail, Users } from 'lucide-react';
+import { Menu, X, Calculator, User, LogOut, LayoutDashboard, Settings, ChevronDown, Home, Sparkles, MessageSquare, Users, Bell } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { useFriendRequests } from '@/hooks/useFriendRequests';
+import { useUnreadUpdates } from '@/hooks/useUnreadUpdates';
 import EasyGPALogo from './EasyGPALogo';
 import ThemeToggle from './ThemeToggle';
 import {
@@ -26,6 +27,7 @@ const Navbar = ({ onNavigate }: NavbarProps) => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const { pendingCount } = useFriendRequests();
+  const { unreadCount: updatesCount } = useUnreadUpdates();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -38,7 +40,7 @@ const Navbar = ({ onNavigate }: NavbarProps) => {
   const navItems = [
     { label: 'Home', section: 'home', icon: Home },
     { label: 'Features', section: 'features', icon: Sparkles },
-    { label: 'Contact', section: 'contact', icon: Mail },
+    { label: 'Contact', section: 'contact', icon: MessageSquare },
   ];
 
   const handleNavClick = (section: string) => {
@@ -124,6 +126,15 @@ const Navbar = ({ onNavigate }: NavbarProps) => {
                         {pendingCount > 0 && (
                           <span className="absolute right-2 bg-primary text-primary-foreground text-xs rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
                             {pendingCount}
+                          </span>
+                        )}
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate('/updates')} className="relative">
+                        <Bell className="w-4 h-4 mr-2" />
+                        Updates
+                        {updatesCount > 0 && (
+                          <span className="absolute right-2 bg-primary text-primary-foreground text-xs rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
+                            {updatesCount}
                           </span>
                         )}
                       </DropdownMenuItem>
@@ -258,6 +269,22 @@ const Navbar = ({ onNavigate }: NavbarProps) => {
                             {pendingCount > 0 && (
                               <span className="ml-auto bg-primary text-primary-foreground text-xs rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
                                 {pendingCount}
+                              </span>
+                            )}
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            className="w-full justify-start text-base relative"
+                            onClick={() => {
+                              navigate('/updates');
+                              setIsMobileMenuOpen(false);
+                            }}
+                          >
+                            <Bell className="w-4 h-4 mr-2" />
+                            Updates
+                            {updatesCount > 0 && (
+                              <span className="ml-auto bg-primary text-primary-foreground text-xs rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
+                                {updatesCount}
                               </span>
                             )}
                           </Button>

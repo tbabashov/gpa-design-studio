@@ -11,6 +11,7 @@ import AuthPage from "./pages/AuthPage";
 import DashboardPage from "./pages/DashboardPage";
 import ProfileSettingsPage from "./pages/ProfileSettingsPage";
 import FriendsPage from "./pages/FriendsPage";
+import UpdatesPage from "./pages/UpdatesPage";
 import CalculatorPage from "./pages/CalculatorPage";
 import FeaturesPage from "./pages/FeaturesPage";
 import ContactPage from "./pages/ContactPage";
@@ -47,6 +48,7 @@ const App = () => {
                   <Route path="/dashboard" element={<DashboardPage />} />
                   <Route path="/profile" element={<ProfileSettingsPage />} />
                   <Route path="/friends" element={<FriendsPage />} />
+                  <Route path="/updates" element={<UpdatesPage />} />
                   <Route path="/calculator" element={<CalculatorPage onNavigateHome={handleNavigateHome} />} />
                   <Route path="/features" element={<FeaturesPage onNavigate={handleNavigate} />} />
                   <Route path="/contact" element={<ContactPage onNavigate={handleNavigate} />} />

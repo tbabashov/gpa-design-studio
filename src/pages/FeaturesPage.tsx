@@ -85,8 +85,8 @@ const features = [
   },
   {
     icon: Users,
-    title: 'Multiple Profiles',
-    description: 'Create separate profiles for different semesters, scenarios, or "what-if" calculations.',
+    title: 'Workspaces',
+    description: 'Create separate workspaces for different semesters, scenarios, or "what-if" calculations.',
     color: 'secondary',
   },
   {
