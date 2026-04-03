@@ -74,7 +74,7 @@ const CalculatorPage = ({ onNavigateHome }: CalculatorPageProps) => {
 
   const isMobile = useIsMobile();
   const [isDragEnabled, setIsDragEnabled] = useState<string | null>(null);
-  const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   
   // Sorting state
   type SortOption = 'default' | 'alphabetical' | 'grade' | 'credits';
