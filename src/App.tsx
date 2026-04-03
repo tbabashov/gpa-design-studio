@@ -50,6 +50,7 @@ const App = () => {
                   <Route path="/profile" element={<ProfileSettingsPage />} />
                   <Route path="/friends" element={<FriendsPage />} />
                   <Route path="/updates" element={<UpdatesPage />} />
+                  <Route path="/friend/:userId" element={<FriendProfilePage />} />
                   <Route path="/calculator" element={<CalculatorPage onNavigateHome={handleNavigateHome} />} />
                   <Route path="/features" element={<FeaturesPage onNavigate={handleNavigate} />} />
                   <Route path="/contact" element={<ContactPage onNavigate={handleNavigate} />} />
