@@ -12,6 +12,7 @@ import DashboardPage from "./pages/DashboardPage";
 import ProfileSettingsPage from "./pages/ProfileSettingsPage";
 import FriendsPage from "./pages/FriendsPage";
 import UpdatesPage from "./pages/UpdatesPage";
+import FriendProfilePage from "./pages/FriendProfilePage";
 import CalculatorPage from "./pages/CalculatorPage";
 import FeaturesPage from "./pages/FeaturesPage";
 import ContactPage from "./pages/ContactPage";
