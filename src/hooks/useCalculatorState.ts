@@ -109,7 +109,7 @@ export const useCalculatorState = () => {
   const { user } = useAuth();
   const [state, setStateInternal] = useState<CalculatorState>(getInitialState);
   const [isLoading, setIsLoading] = useState(false);
-  const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const syncTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hasLoadedFromDbRef = useRef(false);
 
   // Sync state to database (debounced)

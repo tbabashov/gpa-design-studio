@@ -33,7 +33,7 @@ const MiniCalculator = () => {
   
   const isMobile = useIsMobile();
   const [isDragEnabled, setIsDragEnabled] = useState<string | null>(null);
-  const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleDragHandlePointerDown = useCallback(
     (e: React.PointerEvent, id: string) => {
