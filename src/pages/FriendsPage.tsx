@@ -376,12 +376,15 @@ const FriendsPage = () => {
                           key={friend.id}
                           className="flex items-center justify-between p-3 rounded-lg bg-muted/30"
                         >
-                          <div className="flex items-center gap-3">
+                          <div
+                            className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
+                            onClick={() => navigate(`/friend/${friend.profile?.user_id}`)}
+                          >
                             <Avatar>
                               <AvatarImage src={friend.profile?.avatar_url || undefined} />
                               <AvatarFallback>{getInitials(friend.profile?.display_name || null)}</AvatarFallback>
                             </Avatar>
-                            <span className="font-medium">{friend.profile?.display_name || 'Anonymous'}</span>
+                            <span className="font-medium hover:underline">{friend.profile?.display_name || 'Anonymous'}</span>
                           </div>
                           <Button
                             variant="ghost"
